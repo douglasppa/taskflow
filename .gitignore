@@ -1,0 +1,16 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+.env
+.env.*
+!.env.example
+*.log
+*.db
+.idea/
+.vscode/
+.DS_Store
+__snapshots__/
+alembic/versions/*.pyc
