@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.base_class import Base
+from app.models.user import User
 
 class Task(Base):
     __tablename__ = "tasks"
@@ -10,4 +11,4 @@ class Task(Base):
     description = Column(String)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
-    owner = relationship("User", backref="tasks")
+    owner = relationship(User, backref="tasks")
