@@ -2,8 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.schemas.task import TaskCreate, TaskOut, TaskUpdate
 from app.services import task as task_service
-from app.services.logger_service import log_event
-from app.constants.actions import LogAction
 from app.db.session import SessionLocal
 from app.db.session import get_db
 from app.auth.auth_bearer import JWTBearer
@@ -12,8 +10,7 @@ router = APIRouter(prefix="/tasks", tags=["Tasks"], dependencies=[Depends(JWTBea
 
 @router.post("/", response_model=TaskOut)
 async def create_task(task: TaskCreate, db: Session = Depends(get_db), user = Depends(JWTBearer())):
-    db_task = task_service.create_task(db, task)
-    await log_event(user_id=int(user["sub"]), action=LogAction.CREATE_TASK, data=task.dict())
+    db_task = task_service.create_task(db, task, user)
     return db_task
 
 @router.get("/{task_id}", response_model=TaskOut)
@@ -35,8 +32,7 @@ async def update_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_
     if db_task.owner_id != int(user["sub"]):
         raise HTTPException(status_code=403, detail="Not authorized to update this task")
 
-    updated = task_service.update_task(db, task_id, task)
-    await log_event(user_id=int(user["sub"]), action=LogAction.UPDATE_TASK, data=task.dict())
+    updated = task_service.update_task(db, task_id, task, user)
     return updated
 
 @router.delete("/{task_id}")
@@ -47,6 +43,5 @@ async def delete_task(task_id: int, db: Session = Depends(get_db), user = Depend
     if db_task.owner_id != int(user["sub"]):
         raise HTTPException(status_code=403, detail="Not authorized to delete this task")
 
-    deleted = task_service.delete_task(db, task_id)
-    await log_event(user_id=int(user["sub"]), action=LogAction.DELETE_TASK, data={"task_id": task_id})
+    deleted = task_service.delete_task(db, task_id, user)
     return {"message": "Task deleted"}

@@ -1,40 +1,23 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
-from app.db.session import SessionLocal
 from app.db.session import get_db
-from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin
-from app.services.logger_service import log_event
-from app.constants.actions import LogAction
-from app.auth.auth_handler import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
-from datetime import timedelta
+from app.services.auth import register_user, login_user
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 @router.post("/register")
 async def register(user: UserCreate, db: Session = Depends(get_db)):
-    if db.query(User).filter(User.email == user.email).first():
-        raise HTTPException(status_code=400, detail="E-mail já registrado")
-
-    hashed = pwd_context.hash(user.hashed_password)
-    db_user = User(email=user.email, hashed_password=hashed)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    await log_event(user_id=db_user.id, action=LogAction.REGISTER, data={"email": db_user.email})
-    return {"msg": "Usuário criado com sucesso"}
+    try:
+        register_user(user, db)
+        return {"msg": "Usuário criado com sucesso"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/login")
 async def login(user: UserLogin, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if not db_user or not pwd_context.verify(user.hashed_password, db_user.hashed_password):
-        raise HTTPException(status_code=401, detail="Credenciais inválidas")
-
-    token = create_access_token(
-        {"sub": str(db_user.id)},
-        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    )
-    await log_event(user_id=db_user.id, action=LogAction.LOGIN, data={"email": db_user.email})
-    return {"access_token": token, "token_type": "bearer"}
+    try:
+        token = login_user(user, db)
+        return {"access_token": token, "token_type": "bearer"}
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))

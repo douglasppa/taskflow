@@ -51,12 +51,13 @@ services:
   celery:
     build: .
     container_name: celery_worker
-    command: celery -A app.workers.worker worker --loglevel=info
+    command: celery -A app.workers.celery_app worker --loglevel=info
     volumes:
       - .:/app
     depends_on:
       - web
       - rabbitmq
+      - mongodb
     env_file:
       - .env
 

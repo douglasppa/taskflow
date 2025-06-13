@@ -1,9 +1,9 @@
 from enum import Enum
 
 class LogAction(str, Enum):
-    CREATE_TASK = "create_task"
-    UPDATE_TASK = "update_task"
-    DELETE_TASK = "delete_task"
+    REGISTER = "register"
     LOGIN = "login"
     LOGOUT = "logout"
-    REGISTER = "register"
+    TASK_CREATE = "create_task"
+    TASK_UPDATE = "update_task"
+    TASK_DELETE = "delete_task"

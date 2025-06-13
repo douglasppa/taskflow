@@ -1,13 +1,17 @@
 from sqlalchemy.orm import Session
 from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskUpdate
+from app.workers.logging_tasks import log_event
+from app.models.user import User
+from app.constants.actions import LogAction
 
-def create_task(db: Session, task_data: TaskCreate):
-    task = Task(**task_data.model_dump())
-    db.add(task)
+def create_task(db: Session, task_data: TaskCreate, user: User):
+    db_task = Task(**task_data.model_dump())
+    db.add(db_task)
     db.commit()
-    db.refresh(task)
-    return task
+    db.refresh(db_task)
+    log_event.delay(str(user["sub"]), LogAction.TASK_CREATE, {"task_id": db_task.id, "title": db_task.title})
+    return db_task
 
 def get_task(db: Session, task_id: int):
     return db.query(Task).filter(Task.id == task_id).first()
@@ -15,18 +19,20 @@ def get_task(db: Session, task_id: int):
 def list_tasks(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Task).offset(skip).limit(limit).all()
 
-def update_task(db: Session, task_id: int, task_data: TaskUpdate):
-    task = db.query(Task).filter(Task.id == task_id).first()
-    if task:
+def update_task(db: Session, task_id: int, task_data: TaskUpdate, user: User):
+    db_task = db.query(Task).filter(Task.id == task_id).first()
+    if db_task:
         for field, value in task_data.model_dump(exclude_unset=True).items():
-            setattr(task, field, value)
+            setattr(db_task, field, value)
         db.commit()
-        db.refresh(task)
-    return task
+        db.refresh(db_task)
+        log_event.delay(str(user["sub"]), LogAction.TASK_UPDATE, {"task_id": db_task.id, "title": db_task.title})
+    return db_task
 
-def delete_task(db: Session, task_id: int):
-    task = db.query(Task).filter(Task.id == task_id).first()
-    if task:
-        db.delete(task)
+def delete_task(db: Session, task_id: int, user: User):
+    db_task = db.query(Task).filter(Task.id == task_id).first()
+    if db_task:
+        db.delete(db_task)
         db.commit()
-    return task
+        log_event.delay(str(user["sub"]), LogAction.TASK_DELETE, {"task_id": db_task.id, "title": db_task.title})
+    return db_task
