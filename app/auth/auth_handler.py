@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
-from jose import JWTError, jwt
+from jose import JWTError, ExpiredSignatureError, jwt
 from dotenv import load_dotenv
+from fastapi import HTTPException
 import os
 
 load_dotenv()
@@ -18,5 +19,7 @@ def verify_access_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expirado")
     except JWTError:
-        return None
+        raise HTTPException(status_code=401, detail="Token inválido")

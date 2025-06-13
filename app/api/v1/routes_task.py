@@ -1,38 +1,52 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.schemas.task import TaskCreate, TaskOut, TaskUpdate
 from app.services import task as task_service
+from app.services.logger_service import log_event
+from app.constants.actions import LogAction
 from app.db.session import SessionLocal
-from app.auth.auth_bearer import JWTBearer
 from app.db.session import get_db
+from app.auth.auth_bearer import JWTBearer
 
-router = APIRouter(prefix="/tasks", tags=["Tasks"])
+router = APIRouter(prefix="/tasks", tags=["Tasks"], dependencies=[Depends(JWTBearer())])
 
-@router.post("/", response_model=TaskOut, dependencies=[Depends(JWTBearer())])
-def create_task(task: TaskCreate, db: Session = Depends(get_db)):
-    return task_service.create_task(db, task)
+@router.post("/", response_model=TaskOut)
+async def create_task(task: TaskCreate, db: Session = Depends(get_db), user = Depends(JWTBearer())):
+    db_task = task_service.create_task(db, task)
+    await log_event(user_id=int(user["sub"]), action=LogAction.CREATE_TASK, data=task.dict())
+    return db_task
 
-@router.get("/{task_id}", response_model=TaskOut, dependencies=[Depends(JWTBearer())])
-def read_task(task_id: int, db: Session = Depends(get_db)):
-    task = task_service.get_task(db, task_id)
-    if not task:
+@router.get("/{task_id}", response_model=TaskOut)
+async def read_task(task_id: int, db: Session = Depends(get_db)):
+    db_task = task_service.get_task(db, task_id)
+    if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
-    return task
+    return db_task
 
-@router.get("/", response_model=list[TaskOut], dependencies=[Depends(JWTBearer())])
-def list_tasks(db: Session = Depends(get_db)):
+@router.get("/", response_model=list[TaskOut])
+async def list_tasks(db: Session = Depends(get_db)):
     return task_service.list_tasks(db)
 
-@router.put("/{task_id}", response_model=TaskOut, dependencies=[Depends(JWTBearer())])
-def update_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_db)):
-    updated = task_service.update_task(db, task_id, task)
-    if not updated:
+@router.put("/{task_id}", response_model=TaskOut)
+async def update_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_db), user = Depends(JWTBearer())):
+    db_task = task_service.get_task(db, task_id)
+    if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
+    if db_task.owner_id != int(user["sub"]):
+        raise HTTPException(status_code=403, detail="Not authorized to update this task")
+
+    updated = task_service.update_task(db, task_id, task)
+    await log_event(user_id=int(user["sub"]), action=LogAction.UPDATE_TASK, data=task.dict())
     return updated
 
-@router.delete("/{task_id}", dependencies=[Depends(JWTBearer())])
-def delete_task(task_id: int, db: Session = Depends(get_db)):
-    deleted = task_service.delete_task(db, task_id)
-    if not deleted:
+@router.delete("/{task_id}")
+async def delete_task(task_id: int, db: Session = Depends(get_db), user = Depends(JWTBearer())):
+    db_task = task_service.get_task(db, task_id)
+    if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
+    if db_task.owner_id != int(user["sub"]):
+        raise HTTPException(status_code=403, detail="Not authorized to delete this task")
+
+    deleted = task_service.delete_task(db, task_id)
+    await log_event(user_id=int(user["sub"]), action=LogAction.DELETE_TASK, data={"task_id": task_id})
     return {"message": "Task deleted"}

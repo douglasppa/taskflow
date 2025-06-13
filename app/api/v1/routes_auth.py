@@ -5,14 +5,16 @@ from app.db.session import SessionLocal
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin
+from app.services.logger_service import log_event
+from app.constants.actions import LogAction
 from app.auth.auth_handler import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 from datetime import timedelta
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["Auth"])
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 @router.post("/register")
-def register(user: UserCreate, db: Session = Depends(get_db)):
+async def register(user: UserCreate, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == user.email).first():
         raise HTTPException(status_code=400, detail="E-mail já registrado")
 
@@ -21,10 +23,11 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    await log_event(user_id=db_user.id, action=LogAction.REGISTER, data={"email": db_user.email})
     return {"msg": "Usuário criado com sucesso"}
 
 @router.post("/login")
-def login(user: UserLogin, db: Session = Depends(get_db)):
+async def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if not db_user or not pwd_context.verify(user.hashed_password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Credenciais inválidas")
@@ -33,5 +36,5 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         {"sub": str(db_user.id)},
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
-    
+    await log_event(user_id=db_user.id, action=LogAction.LOGIN, data={"email": db_user.email})
     return {"access_token": token, "token_type": "bearer"}
