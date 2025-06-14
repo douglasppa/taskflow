@@ -6,8 +6,10 @@ from app.db.session import SessionLocal
 from app.db.session import get_db
 from app.auth.auth_bearer import JWTBearer
 from http import HTTPStatus
+import logging
+logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/tasks", tags=["Tasks"], dependencies=[Depends(JWTBearer())])
+router = APIRouter(prefix="/tasks", tags=["Task Management"], dependencies=[Depends(JWTBearer())])
 
 @router.post("/", response_model=TaskOut, summary="Create a new task", status_code=HTTPStatus.CREATED)
 async def create_task(task: TaskCreate, db: Session = Depends(get_db), user = Depends(JWTBearer())):
@@ -18,6 +20,7 @@ async def create_task(task: TaskCreate, db: Session = Depends(get_db), user = De
 async def read_task(task_id: int, db: Session = Depends(get_db)):
     db_task = task_service.get_task(db, task_id)
     if not db_task:
+        logger.exception("Task not found with ID: %s", task_id)
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT.value,
             detail="Task not found"
@@ -32,11 +35,13 @@ async def list_tasks(db: Session = Depends(get_db)):
 async def update_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_db), user = Depends(JWTBearer())):
     db_task = task_service.get_task(db, task_id)
     if not db_task:
+        logger.exception("Task not found with ID: %s", task_id)
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT.value,
             detail="Task not found"
         )
     if db_task.owner_id != int(user["sub"]):
+        logger.warning("User %s not authorized to update task %s", user["sub"], task_id)
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN.value,
             detail="Not authorized to update this task"
@@ -49,11 +54,13 @@ async def update_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_
 async def delete_task(task_id: int, db: Session = Depends(get_db), user = Depends(JWTBearer())):
     db_task = task_service.get_task(db, task_id)
     if not db_task:
+        logger.exception("Task not found with ID: %s", task_id)
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT.value,
             detail="Task not found"
         )
     if db_task.owner_id != int(user["sub"]):
+        logger.warning("User %s not authorized to delete task %s", user["sub"], task_id)
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN.value,
             detail="Not authorized to delete this task"

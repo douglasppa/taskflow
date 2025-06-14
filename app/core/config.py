@@ -13,6 +13,7 @@ class Settings(BaseSettings):
 
     # Authentication settings
     SECRET_KEY: str
+    ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     # RabbitMQ connection
