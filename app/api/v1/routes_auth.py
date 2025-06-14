@@ -6,7 +6,7 @@ from app.services.auth import register_user, login_user
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
-@router.post("/register")
+@router.post("/register", summary="Register a new user", status_code=201)
 async def register(user: UserCreate, db: Session = Depends(get_db)):
     try:
         register_user(user, db)
@@ -14,7 +14,7 @@ async def register(user: UserCreate, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.post("/login")
+@router.post("/login", summary="Login a user", status_code=200)
 async def login(user: UserLogin, db: Session = Depends(get_db)):
     try:
         token = login_user(user, db)
