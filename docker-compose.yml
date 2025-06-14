@@ -64,8 +64,11 @@ services:
   prometheus:
     image: prom/prometheus
     container_name: prometheus
+    command:
+      - "--storage.tsdb.retention.time=30d"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
     ports:
       - "9090:9090"
 
@@ -95,3 +98,4 @@ volumes:
   pgdata:
   mongodata:
   grafana_data:
+  prometheus_data:
