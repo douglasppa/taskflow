@@ -6,7 +6,7 @@ class TaskBase(BaseModel):
     description: Optional[str] = None
 
 class TaskCreate(TaskBase):
-    owner_id: int  # para simplificar, sem autenticação por enquanto
+    pass
 
 class TaskUpdate(TaskBase):
     pass

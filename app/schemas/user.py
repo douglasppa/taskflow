@@ -2,11 +2,11 @@ from pydantic import BaseModel, EmailStr, ConfigDict
 
 class UserCreate(BaseModel):
     email: EmailStr
-    hashed_password: str
+    password: str
 
 class UserLogin(BaseModel):
     email: EmailStr
-    hashed_password: str
+    password: str
 
 class UserResponse(BaseModel):
     id: int

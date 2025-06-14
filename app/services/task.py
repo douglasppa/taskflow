@@ -6,7 +6,7 @@ from app.models.user import User
 from app.constants.actions import LogAction
 
 def create_task(db: Session, task_data: TaskCreate, user: User):
-    db_task = Task(**task_data.model_dump())
+    db_task = Task(**task_data.model_dump(), owner_id=str(user["sub"]))
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
