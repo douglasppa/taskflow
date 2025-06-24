@@ -1,6 +1,10 @@
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REQUIREMENTS: dev-requirements.txt
     container_name: fastapi_app
     volumes:
       - .:/app
