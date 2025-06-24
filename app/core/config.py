@@ -19,6 +19,8 @@ class Settings(BaseSettings):
 
     # RabbitMQ connection
     RABBITMQ_URL: str
+    RABBITMQ_USER: str
+    RABBITMQ_PASS: str
 
     # MongoDB connection
     MONGO_URL: str

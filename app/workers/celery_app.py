@@ -1,5 +1,7 @@
 from celery import Celery
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 CELERY_BROKER_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq:5672//")
 
