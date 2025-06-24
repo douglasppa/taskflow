@@ -5,6 +5,8 @@ from app.db.session import get_db
 import pika
 import os
 from pymongo import MongoClient
+import logging
+logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Monitoring"])
 
@@ -27,16 +29,20 @@ def readiness_probe(db: Session = Depends(get_db)):
         mongo_url = os.getenv("MONGO_URL", "mongodb://mongo_db:27017")
         client = MongoClient(mongo_url, serverSelectionTimeoutMS=500)
         client.server_info()
+        client.close()
+        logger.info("MongoDB connection successful")
     except Exception as e:
         errors.append(f"MongoDB: {e}")
 
     # RabbitMQ
     try:
-        rabbit_host = os.getenv("RABBITMQ_HOST", "rabbitmq")
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbit_host))
+        rabbit_url = os.getenv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672")
+        connection = pika.BlockingConnection(pika.URLParameters(rabbit_url))
         connection.close()
+        logger.info("RabbitMQ connection successful")
     except Exception as e:
-        errors.append(f"RabbitMQ: {e}")
+        logger.exception("Failed to connect to RabbitMQ")
+        errors.append(f"RabbitMQ: {type(e).__name__} - {str(e) or repr(e)}")
 
     if errors:
         return {"status": "degraded", "errors": errors}

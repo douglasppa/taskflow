@@ -1,7 +1,7 @@
 from celery import Celery
 import os
 
-CELERY_BROKER_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672//")
+CELERY_BROKER_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq:5672//")
 
 celery_app = Celery(
     "worker",
