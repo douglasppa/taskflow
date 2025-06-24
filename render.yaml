@@ -8,31 +8,31 @@ services:
     dockerfilePath: Dockerfile
     envVars:
       - key: POSTGRES_USER
-        value: taskflow_user
+        valueFrom: environmentVariable
       - key: POSTGRES_PASSWORD
-        value: taskflow_pass
+        valueFrom: environmentVariable
       - key: POSTGRES_DB
-        value: taskflow_db
+        valueFrom: environmentVariable
       - key: POSTGRES_HOST
         fromDatabase:
           name: taskflow-db
           property: host
       - key: POSTGRES_PORT
-        value: 5432
+        valueFrom: environmentVariable
       - key: MONGO_URL
-        value: mongodb+srv://taskflow_user:0pCwxPEEbVIKvT5n@taskflow-cluster.y5bcfp3.mongodb.net/?retryWrites=true&w=majority&appName=taskflow-cluster
+        valueFrom: environmentVariable
       - key: MONGO_DB_NAME
-        value: taskflow
-      - key: JWT_SECRET_KEY
-        value: super-secret
-      - key: JWT_ALGORITHM
-        value: HS256
+        valueFrom: environmentVariable
+      - key: SECRET_KEY
+        valueFrom: environmentVariable
+      - key: ALGORITHM
+        valueFrom: environmentVariable
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
-        value: 30
+        valueFrom: environmentVariable
       - key: RABBITMQ_URL
-        value: amqps://zmrmaehz:PDMFEkauihqedYaioLkqcAkPgfBl9oy3@woodpecker.rmq.cloudamqp.com/zmrmaehz
-      - key: PROMETHEUS_METRICS_PORT
-        value: 8000
+        valueFrom: environmentVariable
+      - key: PROMETHEUS_PORT
+        valueFrom: environmentVariable
 
 databases:
   - name: taskflow-db

@@ -18,14 +18,16 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     # RabbitMQ connection
-    RABBITMQ_USER: str
-    RABBITMQ_PASS: str
+    RABBITMQ_URL: str
 
     # MongoDB connection
     MONGO_URL: str
     MONGO_DB_NAME: str
     MONGO_DB_ATLAS_USER: str | None = None
     MONGO_DB_ATLAS_PASSWORD: str | None = None
+
+    # Prometheus settings
+    PROMETHEUS_PORT: int
 
     class Config:
         env_file = ".env"
