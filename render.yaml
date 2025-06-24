@@ -6,33 +6,6 @@ services:
     repo: https://github.com/douglasppa/taskflow
     branch: main
     dockerfilePath: Dockerfile
-    envVars:
-      - key: POSTGRES_USER
-        valueFrom: environmentVariable
-      - key: POSTGRES_PASSWORD
-        valueFrom: environmentVariable
-      - key: POSTGRES_DB
-        valueFrom: environmentVariable
-      - key: POSTGRES_HOST
-        fromDatabase:
-          name: taskflow-db
-          property: host
-      - key: POSTGRES_PORT
-        valueFrom: environmentVariable
-      - key: MONGO_URL
-        valueFrom: environmentVariable
-      - key: MONGO_DB_NAME
-        valueFrom: environmentVariable
-      - key: SECRET_KEY
-        valueFrom: environmentVariable
-      - key: ALGORITHM
-        valueFrom: environmentVariable
-      - key: ACCESS_TOKEN_EXPIRE_MINUTES
-        valueFrom: environmentVariable
-      - key: RABBITMQ_URL
-        valueFrom: environmentVariable
-      - key: PROMETHEUS_PORT
-        valueFrom: environmentVariable
 
 databases:
   - name: taskflow-db
