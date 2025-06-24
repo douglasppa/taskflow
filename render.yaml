@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: taskflow-api
+    env: docker
+    plan: free
+    repo: https://github.com/douglasppa/taskflow
+    branch: main
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: POSTGRES_USER
+        value: taskflow_user
+      - key: POSTGRES_PASSWORD
+        value: taskflow_pass
+      - key: POSTGRES_DB
+        value: taskflow_db
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: taskflow-db
+          property: host
+      - key: POSTGRES_PORT
+        value: 5432
+      - key: MONGO_URL
+        value: mongodb+srv://taskflow_user:0pCwxPEEbVIKvT5n@taskflow-cluster.y5bcfp3.mongodb.net/?retryWrites=true&w=majority&appName=taskflow-cluster
+      - key: MONGO_DB_NAME
+        value: taskflow
+      - key: JWT_SECRET_KEY
+        value: super-secret
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 30
+      - key: RABBITMQ_URL
+        value: amqps://zmrmaehz:PDMFEkauihqedYaioLkqcAkPgfBl9oy3@woodpecker.rmq.cloudamqp.com/zmrmaehz
+      - key: PROMETHEUS_METRICS_PORT
+        value: 8000
+
+databases:
+  - name: taskflow-db
+    databaseName: taskflow_db
+    user: taskflow_user
+    plan: free

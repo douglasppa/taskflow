@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
     POSTGRES_HOST: str
+    POSTGRES_PORT: int
 
     # Authentication settings
     SECRET_KEY: str
@@ -23,6 +24,8 @@ class Settings(BaseSettings):
     # MongoDB connection
     MONGO_URL: str
     MONGO_DB_NAME: str
+    MONGO_DB_ATLAS_USER: str | None = None
+    MONGO_DB_ATLAS_PASSWORD: str | None = None
 
     class Config:
         env_file = ".env"
