@@ -39,10 +39,20 @@ jobs:
       POSTGRES_USER: taskflow_user
       POSTGRES_PASSWORD: taskflow_pass
       POSTGRES_DB: taskflow_db
-      SQLALCHEMY_DATABASE_URL: postgresql+psycopg2://taskflow_user:taskflow_pass@localhost:5432/taskflow_db
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+
       MONGO_URL: mongodb://localhost:27017
       MONGO_DB_NAME: taskflow
+
       RABBITMQ_URL: amqp://guest:guest@localhost:5672//
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+
+      SECRET_KEY: changeme
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      PROMETHEUS_PORT: 9000
 
     steps:
       - name: Checkout repo
