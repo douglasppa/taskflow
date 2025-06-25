@@ -9,18 +9,22 @@ Usados em:
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
+
 class TaskBase(BaseModel):
     # Base para os schemas de Task
     title: str
     description: Optional[str] = None
 
+
 class TaskCreate(TaskBase):
     # Usado como payload de entrada no endpoint POST /tasks
     pass
 
+
 class TaskUpdate(TaskBase):
     # Usado como payload de entrada no endpoint PUT /tasks/{id}
     pass
+
 
 class TaskOut(TaskBase):
     # Usado como resposta nos endpoints GET /tasks e GET /tasks/{id}

@@ -6,13 +6,16 @@ import pika
 import os
 from pymongo import MongoClient
 import logging
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Monitoring"])
 
+
 @router.get("/health/live", summary="Liveness probe")
 def liveness_probe():
     return {"status": "alive"}
+
 
 @router.get("/health/ready", summary="Readiness probe")
 def readiness_probe(db: Session = Depends(get_db)):
@@ -46,5 +49,5 @@ def readiness_probe(db: Session = Depends(get_db)):
 
     if errors:
         return {"status": "degraded", "errors": errors}
-    
+
     return {"status": "ready"}

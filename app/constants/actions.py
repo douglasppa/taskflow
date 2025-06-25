@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class LogAction(str, Enum):
     REGISTER = "register"
     LOGIN = "login"

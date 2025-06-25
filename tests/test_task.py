@@ -1,6 +1,7 @@
 # tests/test_task.py
 from http import HTTPStatus
 
+
 def test_task_flow(client):
     # Ensure the user is registered and logged in
     data = {"email": "test@example.com", "password": "test123"}
@@ -8,9 +9,13 @@ def test_task_flow(client):
     login_response = client.post("/api/v1/auth/login", json=data)
     token = login_response.json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     # Create a new task
-    create_response = client.post("/api/v1/tasks/", json={"title": "Nova tarefa", "description": "Descrição da tarefa"}, headers=headers)
+    create_response = client.post(
+        "/api/v1/tasks/",
+        json={"title": "Nova tarefa", "description": "Descrição da tarefa"},
+        headers=headers,
+    )
     assert create_response.status_code == HTTPStatus.CREATED
     assert "id" in create_response.json()
     assert create_response.json()["title"] == "Nova tarefa"
@@ -18,11 +23,10 @@ def test_task_flow(client):
     task_id = create_response.json()["id"]
 
     # Update the task
-    update_data = {
-        "title": "Tarefa atualizada",
-        "description": "Descrição atualizada"
-    }
-    update_response = client.put(f"/api/v1/tasks/{task_id}", json=update_data, headers=headers)
+    update_data = {"title": "Tarefa atualizada", "description": "Descrição atualizada"}
+    update_response = client.put(
+        f"/api/v1/tasks/{task_id}", json=update_data, headers=headers
+    )
     assert update_response.status_code == HTTPStatus.OK
     assert update_response.json()["title"] == update_data["title"]
     assert update_response.json()["description"] == update_data["description"]

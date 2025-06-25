@@ -3,6 +3,7 @@ from fastapi import Request, HTTPException
 from .auth_handler import verify_access_token
 from http import HTTPStatus
 
+
 class JWTBearer(HTTPBearer):
     async def __call__(self, request: Request):
         credentials: HTTPAuthorizationCredentials = await super().__call__(request)
@@ -11,7 +12,7 @@ class JWTBearer(HTTPBearer):
             raise HTTPException(
                 status_code=HTTPStatus.UNAUTHORIZED,
                 detail="Credenciais de autenticação ausentes",
-                headers={"WWW-Authenticate": "Bearer"}
+                headers={"WWW-Authenticate": "Bearer"},
             )
 
         token = credentials.credentials
@@ -21,7 +22,7 @@ class JWTBearer(HTTPBearer):
             raise HTTPException(
                 status_code=HTTPStatus.UNAUTHORIZED,
                 detail="Token inválido ou expirado",
-                headers={"WWW-Authenticate": "Bearer"}
+                headers={"WWW-Authenticate": "Bearer"},
             )
 
         request.state.user = payload  # útil para middlewares, logs etc.

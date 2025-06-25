@@ -12,11 +12,14 @@ celery_app.conf.task_always_eager = True
 
 # Banco em memória (SQLite)
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Cria o schema na memória
 Base.metadata.create_all(bind=engine)
+
 
 @pytest.fixture(scope="function")
 def db_session():
@@ -36,6 +39,7 @@ def db_session():
 @pytest.fixture(scope="function")
 def client(db_session):
     """Cria um client FastAPI com DB isolado para cada teste."""
+
     def override_get_db():
         try:
             yield db_session

@@ -1,6 +1,7 @@
 # tests/test_auth.py
 from http import HTTPStatus
 
+
 def test_register_and_login(client):
     data = {"email": "test@example.com", "password": "test123"}
 
