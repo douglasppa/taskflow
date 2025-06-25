@@ -8,6 +8,7 @@ from app.constants.actions import LogAction
 from app.auth.auth_handler import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 from app.workers.logging_tasks import log_event
 from app.core.metrics import user_login_total
+from fastapi import HTTPException
 from http import HTTPStatus
 import logging
 logger = logging.getLogger(__name__)

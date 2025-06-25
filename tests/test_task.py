@@ -1,5 +1,4 @@
 # tests/test_task.py
-import pytest
 from http import HTTPStatus
 
 def test_task_flow(client):

@@ -1,5 +1,4 @@
 # tests/test_healthcheck.py
-import pytest
 from http import HTTPStatus
 
 def test_liveness(client):

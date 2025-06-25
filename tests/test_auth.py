@@ -1,5 +1,4 @@
 # tests/test_auth.py
-import pytest
 from http import HTTPStatus
 
 def test_register_and_login(client):

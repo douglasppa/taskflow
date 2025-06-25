@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.schemas.task import TaskCreate, TaskOut, TaskUpdate
 from app.services import task as task_service
-from app.db.session import SessionLocal
 from app.db.session import get_db
 from app.auth.auth_bearer import JWTBearer
 from http import HTTPStatus
@@ -67,4 +66,11 @@ async def delete_task(task_id: int, db: Session = Depends(get_db), user = Depend
         )
 
     deleted = task_service.delete_task(db, task_id, user)
+    if not deleted:
+        logger.error("Failed to delete task with ID: %s", task_id)
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+            detail="Failed to delete task"
+        )
+    logger.info("Task with ID %s deleted successfully", task_id)
     return {"message": "Task deleted"}
