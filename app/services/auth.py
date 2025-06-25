@@ -11,7 +11,6 @@ from app.core.metrics import user_login_total
 from fastapi import HTTPException
 from http import HTTPStatus
 import logging
-import os
 
 logger = logging.getLogger(__name__)
 
