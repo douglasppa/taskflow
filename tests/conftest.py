@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import patch
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.db.base import Base
@@ -6,6 +7,8 @@ from app.main import app
 from fastapi.testclient import TestClient
 from app.db.session import get_db
 from app.workers.celery_app import celery_app
+from dotenv import load_dotenv
+load_dotenv(".env.test")
 
 # Ativa execução síncrona do Celery nos testes
 celery_app.conf.task_always_eager = True
@@ -19,6 +22,12 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 
 # Cria o schema na memória
 Base.metadata.create_all(bind=engine)
+
+
+@pytest.fixture(autouse=True)
+def disable_celery_log_event():
+    with patch("app.workers.logging_tasks.log_event.delay") as mock_task:
+        yield mock_task
 
 
 @pytest.fixture(scope="function")
@@ -41,6 +50,7 @@ def client(db_session):
     """Cria um client FastAPI com DB isolado para cada teste."""
 
     def override_get_db():
+        print("Usando DB para testes:", engine.url)
         try:
             yield db_session
         finally:
