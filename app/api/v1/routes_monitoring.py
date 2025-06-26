@@ -4,7 +4,6 @@ from sqlalchemy import text
 from app.core.config import settings
 from app.db.session import get_db
 import pika
-import os
 from pymongo import MongoClient
 from app.core.logger import log
 

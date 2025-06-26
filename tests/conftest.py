@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from app.db.session import get_db
 from app.workers.celery_app import celery_app
 from dotenv import load_dotenv
+
 load_dotenv(".env.test")
 
 # Ativa execução síncrona do Celery nos testes
