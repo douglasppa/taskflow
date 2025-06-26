@@ -95,8 +95,8 @@ async def read_task(task_id: int, db: Session = Depends(get_db)):
     summary="List all tasks",
     status_code=HTTPStatus.OK,
 )
-async def list_tasks(db: Session = Depends(get_db)):
-    return task_service.list_tasks(db)
+async def list_tasks(db: Session = Depends(get_db), skip: int = 0, limit: int = 10):
+    return task_service.list_tasks(db, skip=skip, limit=limit)
 
 
 @router.put(
