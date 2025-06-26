@@ -1,14 +1,19 @@
 from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 from app.core.config import settings
-from app.core.logging_config import setup_logging
 from app.core.init_db import run_migrations
+from app.core.logger import log
 
 from app.api.v1.routes_task import router as task_router
 from app.api.v1.routes_auth import router as auth_router
 from app.api.v1.routes_monitoring import router as monitoring_router
 
-setup_logging()
+import sys
+
+sys.stdout.reconfigure(line_buffering=True)
+sys.stderr.reconfigure(line_buffering=True)
+
+log("FastAPI is starting!", level="INFO")
 
 app = FastAPI(title=settings.PROJECT_NAME)
 

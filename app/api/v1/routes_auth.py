@@ -4,9 +4,7 @@ from app.db.session import get_db
 from app.schemas.user import UserCreate, UserLogin
 from app.services.auth import register_user, login_user
 from http import HTTPStatus
-import logging
-
-logger = logging.getLogger(__name__)
+from app.core.logger import log
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -17,10 +15,10 @@ async def register(user: UserCreate, db: Session = Depends(get_db)):
         register_user(user, db)
         return {"msg": "Usuário criado com sucesso"}
     except HTTPException as e:
-        logger.exception("Erro ao registrar usuário")
+        log("Erro ao registrar usuário", level="ERROR")
         raise e
     except Exception:
-        logger.exception("Erro interno no servidor ao registrar usuário")
+        log("Erro interno no servidor ao registrar usuário", level="ERROR")
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail="Erro interno no servidor",
@@ -33,5 +31,5 @@ async def login(user: UserLogin, db: Session = Depends(get_db)):
         token = login_user(user, db)
         return {"access_token": token, "token_type": "bearer"}
     except ValueError as e:
-        logger.warning("Falha de login: %s", str(e))
+        log(f"Falha de login para o usuário {user.username}: {str(e)}", level="ERROR")
         raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED.value, detail=str(e))

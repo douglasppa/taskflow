@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from app.db.base import Base
 from app.main import app
 from fastapi.testclient import TestClient
-from app.db.session import get_db  # ajuste conforme a localização
+from app.db.session import get_db
 from app.workers.celery_app import celery_app
 
 # Ativa execução síncrona do Celery nos testes
