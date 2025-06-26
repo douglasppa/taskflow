@@ -5,9 +5,10 @@ from datetime import timedelta
 from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin
 from app.constants.actions import LogAction
-from app.auth.auth_handler import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+from app.auth.auth_handler import create_access_token
 from app.workers.logging_tasks import log_event
 from app.core.metrics import user_login_total
+from app.core.config import settings
 from fastapi import HTTPException
 from http import HTTPStatus
 import logging
@@ -42,7 +43,7 @@ def login_user(user_data: UserLogin, db: Session):
         raise ValueError("Credenciais inválidas")
     token = create_access_token(
         {"sub": str(db_user.id)},
-        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
+        expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     user_login_total.inc()
     try:

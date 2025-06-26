@@ -39,8 +39,7 @@ def readiness_probe(db: Session = Depends(get_db)):
 
     # RabbitMQ
     try:
-        rabbit_url = os.getenv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672")
-        connection = pika.BlockingConnection(pika.URLParameters(rabbit_url))
+        connection = pika.BlockingConnection(pika.URLParameters(settings.RABBITMQ_URL))
         connection.close()
         log("RabbitMQ connection successful", level="INFO")
     except Exception as e:
