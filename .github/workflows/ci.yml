@@ -99,7 +99,8 @@ jobs:
       - name: Run tests and generate coverage
         run: |
           coverage run --source=app -m pytest
-          coverage xml --relative
+          coverage xml
+          sed -i 's|<source>.*</source>|<source>app</source>|' coverage.xml
       
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
