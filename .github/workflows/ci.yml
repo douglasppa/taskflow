@@ -35,7 +35,7 @@ jobs:
   test:
     name: Test 🧪
     runs-on: ubuntu-latest
-    needs: lint  # ← só roda se o lint passar
+    needs: lint
 
     services:
       postgres:
@@ -96,6 +96,39 @@ jobs:
           pip install -r requirements.txt
           pip install -r dev-requirements.txt
 
-      - name: Run tests
+      - name: Run tests and generate coverage
         run: |
-          pytest --maxfail=1 --disable-warnings
+          pytest --cov=app --cov-report=xml --disable-warnings
+
+      - name: Save coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+  sonarcloud:
+    name: SonarCloud 🔍
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.projectKey=douglasppa_taskflow
+            -Dsonar.organization=douglasppa
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.sources=app
+            -Dsonar.tests=tests
+            -Dsonar.verbose=true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
