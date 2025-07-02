@@ -126,9 +126,12 @@ jobs:
           args: >
             -Dsonar.projectKey=douglasppa_taskflow
             -Dsonar.organization=douglasppa
-            -Dsonar.python.coverage.reportPaths=coverage.xml
             -Dsonar.sources=app
             -Dsonar.tests=tests
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.coverage.inclusions=app/**
+            -Dsonar.coverage.exclusions=tests/**
+            -Dsonar.projectBaseDir=.
             -Dsonar.verbose=true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

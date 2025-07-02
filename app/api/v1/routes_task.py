@@ -10,6 +10,8 @@ from app.auth.auth_bearer import JWTBearer
 from http import HTTPStatus
 import asyncio
 from app.core.logger import log
+from app.constants.actions import TASK_NOT_FOUND_MSG
+
 
 router = APIRouter(
     prefix="/tasks", tags=["Task Management"], dependencies=[Depends(JWTBearer())]
@@ -84,7 +86,7 @@ async def read_task(task_id: int, db: Session = Depends(get_db)):
     if not db_task:
         log(f"Task not found with ID: {task_id}", level="ERROR")
         raise HTTPException(
-            status_code=HTTPStatus.CONFLICT.value, detail="Task not found"
+            status_code=HTTPStatus.CONFLICT.value, detail=TASK_NOT_FOUND_MSG
         )
     return db_task
 
@@ -115,7 +117,7 @@ async def update_task(
     if not db_task:
         log(f"Task not found with ID: {task_id}", level="ERROR")
         raise HTTPException(
-            status_code=HTTPStatus.CONFLICT.value, detail="Task not found"
+            status_code=HTTPStatus.CONFLICT.value, detail=TASK_NOT_FOUND_MSG
         )
     if db_task.owner_id != int(user["sub"]):
         log(
@@ -142,7 +144,7 @@ async def delete_task(
     if not db_task:
         log(f"Task not found with ID: {task_id}", level="ERROR")
         raise HTTPException(
-            status_code=HTTPStatus.CONFLICT.value, detail="Task not found"
+            status_code=HTTPStatus.CONFLICT.value, detail=TASK_NOT_FOUND_MSG
         )
     if db_task.owner_id != int(user["sub"]):
         log(
