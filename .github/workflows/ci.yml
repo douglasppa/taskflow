@@ -98,7 +98,7 @@ jobs:
 
       - name: Run tests and generate coverage
         run: |
-          pytest --cov=app --cov-report=xml --disable-warnings
+          pytest --cov --cov-config=.coveragerc
 
       - name: Save coverage report
         uses: actions/upload-artifact@v4

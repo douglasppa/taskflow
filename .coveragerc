@@ -1,0 +1,17 @@
+[run]
+source = app
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    @abstractmethod
+    raise NotImplementedError
+
+[paths]
+source =
+    app
+    */site-packages/app
+
+[xml]
+output = coverage.xml
