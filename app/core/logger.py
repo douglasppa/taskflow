@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import inspect
 
 COLORS = {
@@ -15,7 +15,7 @@ def log(msg: str, level: str = "INFO"):
     module = inspect.getmodule(frame[0])
     mod_name = module.__name__ if module else "unknown"
 
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     color = COLORS.get(level.upper(), COLORS["RESET"])
     reset = COLORS["RESET"]
 

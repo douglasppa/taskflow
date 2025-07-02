@@ -3,7 +3,7 @@ from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskUpdate
 from app.workers.logging_tasks import log_event
 from app.models.user import User
-from app.constants.actions import LogAction
+from app.constants.actions import LogAction, LOG_SEND_MSG
 from app.core.metrics import task_created_total
 import logging
 
@@ -23,7 +23,7 @@ def create_task(db: Session, task_data: TaskCreate, user: User):
             LogAction.TASK_CREATE,
             {"task_id": db_task.id, "title": db_task.title},
         )
-        logger.info("Log enviado ao Celery com sucesso")
+        logger.info(LOG_SEND_MSG)
     except Exception as e:
         logger.error(f"Erro ao enviar log async: {e}")
     return db_task
@@ -51,7 +51,7 @@ def update_task(db: Session, task_id: int, task_data: TaskUpdate, user: User):
                 LogAction.TASK_UPDATE,
                 {"task_id": db_task.id, "title": db_task.title},
             )
-            logger.info("Log enviado ao Celery com sucesso")
+            logger.info(LOG_SEND_MSG)
         except Exception as e:
             logger.error(f"Erro ao enviar log async: {e}")
     return db_task
@@ -69,7 +69,7 @@ def delete_task(db: Session, task_id: int, user: User):
                 LogAction.TASK_DELETE,
                 {"task_id": db_task.id, "title": db_task.title},
             )
-            logger.info("Log enviado ao Celery com sucesso")
+            logger.info(LOG_SEND_MSG)
         except Exception as e:
             logger.error(f"Erro ao enviar log async: {e}")
     return db_task

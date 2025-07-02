@@ -9,6 +9,7 @@ from app.auth.auth_handler import create_access_token
 from app.workers.logging_tasks import log_event
 from app.core.metrics import user_login_total
 from app.core.config import settings
+from app.constants.actions import LOG_SEND_MSG
 from fastapi import HTTPException
 from http import HTTPStatus
 import logging
@@ -30,7 +31,7 @@ def register_user(user_data: UserCreate, db: Session):
     db.refresh(db_user)
     try:
         log_event.delay(str(db_user.id), LogAction.REGISTER, {"email": db_user.email})
-        logger.info("Log enviado ao Celery com sucesso")
+        logger.info(LOG_SEND_MSG)
     except Exception as e:
         logger.error(f"Erro ao enviar log async: {e}")
     return db_user
@@ -48,7 +49,7 @@ def login_user(user_data: UserLogin, db: Session):
     user_login_total.inc()
     try:
         log_event.delay(str(db_user.id), LogAction.LOGIN, {"email": db_user.email})
-        logger.info("Log enviado ao Celery com sucesso")
+        logger.info(LOG_SEND_MSG)
     except Exception as e:
         logger.error(f"Erro ao enviar log async: {e}")
     return token
