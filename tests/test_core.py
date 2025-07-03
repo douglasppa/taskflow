@@ -1,9 +1,6 @@
 # tests/test_core.py
-import sys
 from pathlib import Path
 
-# Adiciona o diretório raiz do projeto ao sys.path
-sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from app.core.config import Settings, FeatureFlags, get_app_version
 
