@@ -86,4 +86,10 @@ Certifique-se de adicionar as variáveis de ambiente no painel da Render com bas
 
 ---
 
+## 📊 Monitoring Dashboard
+
+Here’s a snapshot of the current observability dashboard in Grafana:
+
+![Grafana Dashboard](assets/grafana-dashboard.png)
+
 Este projeto é uma iniciativa de aprendizado e prática com tecnologias modernas de backend. Contributions e feedbacks são bem-vindos! 🚀

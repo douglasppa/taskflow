@@ -29,7 +29,13 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title=settings.PROJECT_NAME, lifespan=lifespan)
 
-Instrumentator().instrument(app).expose(app)
+
+Instrumentator(
+    should_group_status_codes=False,
+    should_ignore_untemplated=True,
+    excluded_handlers=["/metrics", "/health/live", "/health/ready"],
+).instrument(app).expose(app)
+
 
 app.include_router(task_router, prefix=settings.API_V1_STR)
 app.include_router(auth_router, prefix=settings.API_V1_STR)
