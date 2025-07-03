@@ -1,13 +1,11 @@
 from app.workers.celery_app import celery_app
-from app.services.logger_service import log_event as sync_log_event
-import logging
-
-logger = logging.getLogger(__name__)
+from app.services.logger import log_event as sync_log_event
+from app.core.logger import log, LogLevel
 
 
 @celery_app.task(name="app.workers.logging_tasks.test_task")
 def test_task():
-    logger.info("🚀 Celery está funcionando!")
+    log("Celery está funcionando!", level=LogLevel.INFO)
     return "Hello from Celery"
 
 

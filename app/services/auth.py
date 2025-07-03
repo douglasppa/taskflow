@@ -12,9 +12,7 @@ from app.core.config import settings
 from app.constants.actions import LOG_SEND_MSG
 from fastapi import HTTPException
 from http import HTTPStatus
-import logging
-
-logger = logging.getLogger(__name__)
+from app.core.logger import log, LogLevel
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -31,16 +29,16 @@ def register_user(user_data: UserCreate, db: Session):
     db.refresh(db_user)
     try:
         log_event.delay(str(db_user.id), LogAction.REGISTER, {"email": db_user.email})
-        logger.info(LOG_SEND_MSG)
-    except Exception as e:
-        logger.error(f"Erro ao enviar log async: {e}")
+        log(LOG_SEND_MSG, level=LogLevel.INFO)
+    except Exception:
+        log("Erro ao enviar log async: {e}", level=LogLevel.ERROR)
     return db_user
 
 
 def login_user(user_data: UserLogin, db: Session):
     db_user = db.query(User).filter(User.email == user_data.email).first()
     if not db_user or not pwd_context.verify(user_data.password, db_user.password):
-        logger.warning(f"Falha de login para o usuário: {user_data.email}")
+        log(f"Falha de login para o usuário: {user_data.email}", level=LogLevel.WARNING)
         raise ValueError("Credenciais inválidas")
     token = create_access_token(
         {"sub": str(db_user.id)},
@@ -49,7 +47,7 @@ def login_user(user_data: UserLogin, db: Session):
     user_login_total.inc()
     try:
         log_event.delay(str(db_user.id), LogAction.LOGIN, {"email": db_user.email})
-        logger.info(LOG_SEND_MSG)
+        log(LOG_SEND_MSG, level=LogLevel.INFO)
     except Exception as e:
-        logger.error(f"Erro ao enviar log async: {e}")
+        log(f"Erro ao enviar log async: {e}", level=LogLevel.ERROR)
     return token

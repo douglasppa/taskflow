@@ -1,6 +1,14 @@
 from datetime import datetime, timezone
 import inspect
 
+
+class LogLevel:
+    INFO = "INFO"
+    DEBUG = "DEBUG"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
+
+
 COLORS = {
     "INFO": "\033[94m",  # Azul
     "DEBUG": "\033[90m",  # Cinza

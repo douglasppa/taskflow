@@ -1,19 +1,19 @@
 from pydantic_settings import BaseSettings
 import os
 from pathlib import Path
-import logging
-from pydantic import Field
+from pydantic import Field, ConfigDict
+from app.core.logger import log, LogLevel
 
 
 def get_app_version() -> str:
-    logger = logging.getLogger(__name__)
     try:
         base_dir = Path(__file__).resolve().parent.parent  # /app/app
         version_path = base_dir.parent / "VERSION"  # /app/VERSION
-        logger.info(f"App Version: {version_path.read_text().strip()}")
-        return version_path.read_text().strip()
+        app_version = version_path.read_text().strip()
+        log(f"App Version: {app_version}", level=LogLevel.INFO)
+        return app_version
     except Exception as e:
-        logger.warning(f"Failed to read VERSION file: {e}")
+        log(f"Failed to read VERSION file: {str(e)}", level=LogLevel.ERROR)
         return "0.0.0"
 
 
@@ -21,12 +21,17 @@ class FeatureFlags(BaseSettings):
     simulate_task_latency: bool = Field(default=False)
     enable_summary_endpoint: bool = Field(default=False)
 
-    class Config:
-        env_prefix = "FEATURE_"
-        extra = "ignore"
+    model_config = ConfigDict(env_prefix="FEATURE_", extra="ignore")
 
 
 class Settings(BaseSettings):
+    @property
+    def SQLALCHEMY_DATABASE_URL(self) -> str:
+        return (
+            f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@"
+            f"{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        )
+
     # Application settings
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "TaskFlow"
@@ -61,10 +66,7 @@ class Settings(BaseSettings):
 
     features: FeatureFlags = FeatureFlags()
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
-        extra = "ignore"
+    model_config = ConfigDict(env_file=".env", case_sensitive=True, extra="ignore")
 
 
 settings = Settings()

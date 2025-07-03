@@ -9,7 +9,7 @@ from app.db.session import get_db
 from app.auth.auth_bearer import JWTBearer
 from http import HTTPStatus
 import asyncio
-from app.core.logger import log
+from app.core.logger import log, LogLevel
 from app.constants.actions import TASK_NOT_FOUND_MSG
 
 
@@ -27,10 +27,10 @@ router = APIRouter(
 async def create_task(
     task: TaskCreate, db: Session = Depends(get_db), user=Depends(JWTBearer())
 ):
-    log("Received request to create a new task", level="INFO")
+    log("Received request to create a new task", level=LogLevel.INFO)
     log(
         f"Flag simulate_task_latency: {settings.features.simulate_task_latency}",
-        level="DEBUG",
+        level=LogLevel.DEBUG,
     )
     if settings.features.simulate_task_latency:
         await asyncio.sleep(3)  # delay artificial para testes
@@ -44,10 +44,10 @@ async def create_task(
     status_code=HTTPStatus.OK,
 )
 async def task_summary(db: Session = Depends(get_db), user=Depends(JWTBearer())):
-    log(f"Generating task summary for user ID: {user['sub']}", level="DEBUG")
+    log(f"Generating task summary for user ID: {user['sub']}", level=LogLevel.INFO)
     log(
         f"Flag enable_summary_endpoint: {settings.features.enable_summary_endpoint}",
-        level="DEBUG",
+        level=LogLevel.DEBUG,
     )
 
     if not settings.features.enable_summary_endpoint:
@@ -68,7 +68,7 @@ async def task_summary(db: Session = Depends(get_db), user=Depends(JWTBearer()))
         }
 
     except Exception:
-        log("Error generating task summary", level="ERROR")
+        log("Error generating task summary", level=LogLevel.ERROR)
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail="Failed to generate task summary",
@@ -84,7 +84,7 @@ async def task_summary(db: Session = Depends(get_db), user=Depends(JWTBearer()))
 async def read_task(task_id: int, db: Session = Depends(get_db)):
     db_task = task_service.get_task(db, task_id)
     if not db_task:
-        log(f"Task not found with ID: {task_id}", level="ERROR")
+        log(f"Task not found with ID: {task_id}", level=LogLevel.ERROR)
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT.value, detail=TASK_NOT_FOUND_MSG
         )
@@ -115,14 +115,14 @@ async def update_task(
 ):
     db_task = task_service.get_task(db, task_id)
     if not db_task:
-        log(f"Task not found with ID: {task_id}", level="ERROR")
+        log(f"Task not found with ID: {task_id}", level=LogLevel.ERROR)
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT.value, detail=TASK_NOT_FOUND_MSG
         )
     if db_task.owner_id != int(user["sub"]):
         log(
             f"User {user['sub']} not authorized to update task with ID: {task_id}",
-            level="WARNING",
+            level=LogLevel.WARNING,
         )
 
         raise HTTPException(
@@ -142,14 +142,14 @@ async def delete_task(
 ):
     db_task = task_service.get_task(db, task_id)
     if not db_task:
-        log(f"Task not found with ID: {task_id}", level="ERROR")
+        log(f"Task not found with ID: {task_id}", level=LogLevel.ERROR)
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT.value, detail=TASK_NOT_FOUND_MSG
         )
     if db_task.owner_id != int(user["sub"]):
         log(
             f"User {user['sub']} not authorized to delete task with ID: {task_id}",
-            level="WARNING",
+            level=LogLevel.WARNING,
         )
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN.value,
@@ -158,10 +158,10 @@ async def delete_task(
 
     deleted = task_service.delete_task(db, task_id, user)
     if not deleted:
-        log(f"Failed to delete task with ID {task_id}", level="ERROR")
+        log(f"Failed to delete task with ID {task_id}", level=LogLevel.ERROR)
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             detail="Failed to delete task",
         )
-    log(f"Task with ID {task_id} deleted successfully", level="INFO")
+    log(f"Task with ID {task_id} deleted successfully", level=LogLevel.INFO)
     return {"message": "Task deleted"}

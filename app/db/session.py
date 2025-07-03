@@ -1,16 +1,20 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
-import os
+from urllib.parse import quote_plus
 
-postgres_host = os.getenv("POSTGRES_HOST")
-if not postgres_host:
-    environment = os.getenv("ENVIRONMENT", "development")
-    postgres_host = "localhost" if environment == "test" else "postgres"
+# Escapa variáveis sensíveis (ex: senha com @ ou :)
+user = quote_plus(settings.POSTGRES_USER)
+password = quote_plus(settings.POSTGRES_PASSWORD)
+db_name = quote_plus(settings.POSTGRES_DB)
+
+# Resolve o host de forma segura: "localhost" para testes, "postgres" para outros
+postgres_host = settings.POSTGRES_HOST or (
+    "localhost" if settings.ENVIRONMENT == "test" else "postgres"
+)
 
 SQLALCHEMY_DATABASE_URL = (
-    f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@"
-    f"{postgres_host}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
+    f"postgresql://{user}:{password}@{postgres_host}:{settings.POSTGRES_PORT}/{db_name}"
 )
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)

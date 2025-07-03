@@ -5,9 +5,7 @@ from app.workers.logging_tasks import log_event
 from app.models.user import User
 from app.constants.actions import LogAction, LOG_SEND_MSG
 from app.core.metrics import task_created_total
-import logging
-
-logger = logging.getLogger(__name__)
+from app.core.logger import log, LogLevel
 
 
 def create_task(db: Session, task_data: TaskCreate, user: User):
@@ -16,16 +14,16 @@ def create_task(db: Session, task_data: TaskCreate, user: User):
     db.commit()
     db.refresh(db_task)
     task_created_total.inc()
-    logger.info(f"Task created: {db_task.id} by user {user['sub']}")
+    log(f"Task created: {db_task.id} by user {user['sub']}", level=LogLevel.INFO)
     try:
         log_event.delay(
             str(user["sub"]),
             LogAction.TASK_CREATE,
             {"task_id": db_task.id, "title": db_task.title},
         )
-        logger.info(LOG_SEND_MSG)
+        log(LOG_SEND_MSG, level=LogLevel.INFO)
     except Exception as e:
-        logger.error(f"Erro ao enviar log async: {e}")
+        log(f"Erro ao enviar log async: {e}", level=LogLevel.ERROR)
     return db_task
 
 
@@ -44,16 +42,16 @@ def update_task(db: Session, task_id: int, task_data: TaskUpdate, user: User):
             setattr(db_task, field, value)
         db.commit()
         db.refresh(db_task)
-        logger.info(f"Task updated: {db_task.id} by user {user['sub']}")
+        log(f"Task updated: {db_task.id} by user {user['sub']}", level=LogLevel.INFO)
         try:
             log_event.delay(
                 str(user["sub"]),
                 LogAction.TASK_UPDATE,
                 {"task_id": db_task.id, "title": db_task.title},
             )
-            logger.info(LOG_SEND_MSG)
+            log(LOG_SEND_MSG, level=LogLevel.INFO)
         except Exception as e:
-            logger.error(f"Erro ao enviar log async: {e}")
+            log(f"Erro ao enviar log async: {e}", level=LogLevel.ERROR)
     return db_task
 
 
@@ -62,14 +60,14 @@ def delete_task(db: Session, task_id: int, user: User):
     if db_task:
         db.delete(db_task)
         db.commit()
-        logger.info(f"Task deleted: {db_task.id} by user {user['sub']}")
+        log(f"Task deleted: {db_task.id} by user {user['sub']}", level=LogLevel.INFO)
         try:
             log_event.delay(
                 str(user["sub"]),
                 LogAction.TASK_DELETE,
                 {"task_id": db_task.id, "title": db_task.title},
             )
-            logger.info(LOG_SEND_MSG)
+            log(LOG_SEND_MSG, level=LogLevel.INFO)
         except Exception as e:
-            logger.error(f"Erro ao enviar log async: {e}")
+            log(f"Erro ao enviar log async: {e}", level=LogLevel.ERROR)
     return db_task
