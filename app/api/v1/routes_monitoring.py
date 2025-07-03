@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.core.config import settings
 from app.db.session import get_db
+from app.db.mongo import get_sync_mongo_db
 import pika
-from pymongo import MongoClient
 from app.core.logger import log, LogLevel
 
 router = APIRouter(tags=["Monitoring"])
@@ -29,7 +29,7 @@ def readiness_probe(db: Session = Depends(get_db)):
 
     # MongoDB
     try:
-        client = MongoClient(settings.MONGO_URL, serverSelectionTimeoutMS=500)
+        db, client = get_sync_mongo_db()
         client.server_info()
         client.close()
         log("MongoDB connection successful", level=LogLevel.INFO)

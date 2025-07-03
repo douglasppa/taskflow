@@ -3,6 +3,31 @@
 Todas as mudanças notáveis neste projeto serão documentadas aqui.
 
 
+## 📦 v1.1.0 – Cobertura total e análise de qualidade
+**Data:** 2025-07-03
+
+### 📊 Qualidade e análise estática
+- Integração com [SonarCloud](https://sonarcloud.io/) para análise de qualidade, cobertura e code smells.
+- Configuração de projeto para reportar cobertura de testes via `pytest-cov`.
+- Correção de todos os pontos críticos apontados pelo Sonar, incluindo duplicação de código, nomes não utilizados e práticas obsoletas.
+
+### 🧪 Testes
+- Implementação de novos testes unitários e de integração para atingir **100% de cobertura**.
+- Testes para rotas de monitoramento (`/health/ready`) cobrindo falhas em MongoDB e RabbitMQ.
+- Testes para logging de eventos assíncronos com validação de persistência no MongoDB.
+
+### 🔧 Refatorações e ajustes técnicos
+- Refatoração do serviço de logging (`logger.py`) para uso consistente de constantes de nível (`LogLevel`).
+- Extração das instâncias de conexão com o MongoDB (`motor` e `pymongo`) para funções reutilizáveis em `app.db.mongo`.
+- Substituição de acesso direto ao `MongoClient` por chamadas centralizadas via função (`get_sync_mongo_db`), melhorando testabilidade.
+- Ajustes no `pytest.ini` para evitar warnings com `env_files` e migração de `Config` para `ConfigDict` no Pydantic v2.
+
+### 🧼 Limpeza e manutenção
+- Remoção de código redundante e proteção contra falhas silenciosas em exceções genéricas.
+- Atualização das dependências com alerta para descontinuação de `crypt` no Python 3.13.
+- Organização de imports e padronização de logs técnicos e mensagens de erro internas.
+
+
 ## 📦 v1.0.0 – Deploy na nuvem e CI/CD
 **Data:** 2025-06-26
 

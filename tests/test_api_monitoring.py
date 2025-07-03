@@ -21,15 +21,14 @@ def test_liveness_success(client):
 
 
 def test_readiness_all_services_ok(client):
-    with patch("app.api.v1.routes_monitoring.MongoClient") as mock_mongo, patch(
-        "app.api.v1.routes_monitoring.pika.BlockingConnection"
-    ) as mock_rabbit:
+    mock_client = MagicMock()
+    mock_client.server_info.return_value = {}
 
-        # Simula sucesso no MongoDB
-        instance = mock_mongo.return_value
-        instance.server_info.return_value = {}
+    with patch(
+        "app.api.v1.routes_monitoring.get_sync_mongo_db",
+        return_value=(MagicMock(), mock_client),
+    ), patch("app.api.v1.routes_monitoring.pika.BlockingConnection") as mock_rabbit:
 
-        # Simula sucesso no RabbitMQ
         mock_rabbit.return_value = MagicMock()
 
         response = client.get("/api/v1/health/ready")
@@ -55,10 +54,13 @@ def test_readiness_postgresql_error(client, app_with_overrides):
 
 
 def test_readiness_mongodb_error(client):
-    with patch("app.api.v1.routes_monitoring.MongoClient") as mock_mongo:
-        instance = mock_mongo.return_value
-        instance.server_info.side_effect = Exception("MongoDB error")
+    mock_client = MagicMock()
+    mock_client.server_info.side_effect = Exception("MongoDB error")
 
+    with patch(
+        "app.api.v1.routes_monitoring.get_sync_mongo_db",
+        return_value=(MagicMock(), mock_client),
+    ):
         response = client.get("/api/v1/health/ready")
         assert response.status_code == HTTPStatus.OK
         assert response.json()["status"] == "degraded"

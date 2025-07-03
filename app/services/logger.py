@@ -1,11 +1,9 @@
 from datetime import datetime, timezone
-from pymongo import MongoClient
-from app.core.config import settings
+from app.db.mongo import get_sync_mongo_db
 
 
 def log_event(user_id: int, action: str, data: dict):
-    client = MongoClient(settings.MONGO_URL)
-    db = client[settings.MONGO_DB_NAME]
+    db, client = get_sync_mongo_db()
 
     log = {
         "user_id": user_id,
