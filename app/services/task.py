@@ -31,8 +31,10 @@ def get_task(db: Session, task_id: int):
     return db.query(Task).filter(Task.id == task_id).first()
 
 
-def list_tasks(db: Session, skip: int = 0, limit: int = 10):
-    return db.query(Task).offset(skip).limit(limit).all()
+def list_tasks(db: Session, owner_id: int, skip: int = 0, limit: int = 10):
+    return (
+        db.query(Task).filter(Task.owner_id == owner_id).offset(skip).limit(limit).all()
+    )
 
 
 def update_task(db: Session, task_id: int, task_data: TaskUpdate, user: User):

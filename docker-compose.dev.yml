@@ -31,6 +31,16 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter
+    container_name: postgres_exporter
+    ports:
+      - "9187:9187"
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
+    depends_on:
+      - postgres
+
   mongodb:
     image: mongo:6
     container_name: mongo_db
@@ -40,15 +50,27 @@ services:
     volumes:
       - mongodata:/data/db
 
+  mongodb_exporter:
+    image: percona/mongodb_exporter:0.40.0
+    container_name: mongodb_exporter
+    ports:
+      - "9216:9216"
+    environment:
+      MONGODB_URI: "mongodb://mongo_db:27017"
+    depends_on:
+      - mongodb
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
+      - "15692:15692" # Exposição de métricas Prometheus
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+      RABBITMQ_PROMETHEUS: "true"
 
   celery:
     build: .
@@ -96,6 +118,17 @@ services:
     working_dir: /app
     env_file:
       - .env
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
 
 volumes:
   pgdata:

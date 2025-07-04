@@ -11,4 +11,7 @@ def test_task():
 
 @celery_app.task(name="app.workers.logging_tasks.log_event")
 def log_event(user_id: str, action: str, data: dict):
-    sync_log_event(user_id=user_id, action=action, data=data)
+    try:
+        sync_log_event(user_id=user_id, action=action, data=data)
+    except Exception as e:
+        log(f"Error in log_event task: {e}", level=LogLevel.ERROR)

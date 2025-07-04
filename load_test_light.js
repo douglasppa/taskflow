@@ -2,12 +2,8 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 export const options = {
-  stages: [
-    { duration: '30s', target: 20 },   // sobe para 20 VUs em 30s
-    { duration: '30s', target: 50 },   // aumenta para 50 VUs em mais 30s
-    { duration: '1m', target: 100 },   // sustenta 100 VUs por 1 min
-    { duration: '30s', target: 0 },    // reduz para 0 (cooldown)
-  ],
+  vus: 1,               // Apenas 1 usuário virtual
+  iterations: 10        // Total de 10 execuções (10 tasks)
 };
 
 const BASE_URL = 'http://localhost:8000';
@@ -55,6 +51,5 @@ export default function () {
     'create task status 201': (r) => r.status === 201,
   });
 
-  // Menor intervalo entre requisições
-  sleep(0.1);
+  sleep(0.2);
 }

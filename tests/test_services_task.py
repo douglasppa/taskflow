@@ -66,16 +66,18 @@ def test_get_task_not_found(db_session):
 
 
 def test_list_tasks(db_session):
-    task_service.create_task(
-        db_session, TaskCreate(title="T1", description=""), make_fake_user()
-    )
-    task_service.create_task(
-        db_session, TaskCreate(title="T2", description=""), make_fake_user()
+    user = make_fake_user()
+
+    task_service.create_task(db_session, TaskCreate(title="T1", description=""), user)
+    task_service.create_task(db_session, TaskCreate(title="T2", description=""), user)
+
+    result = task_service.list_tasks(
+        db_session, owner_id=int(user["sub"]), skip=0, limit=10
     )
 
-    result = task_service.list_tasks(db_session, skip=0, limit=10)
     assert isinstance(result, list)
-    assert len(result) >= 2
+    assert len(result) == 2
+    assert all(task.owner_id == int(user["sub"]) for task in result)
 
 
 # ==============================================================================
