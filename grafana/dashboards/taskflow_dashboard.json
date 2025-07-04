@@ -35,7 +35,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "fieldMinMax": false,
@@ -94,7 +94,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "up{job=\"fastapi\"}",
           "range": true,
@@ -105,7 +105,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -158,7 +158,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "avg_over_time(up{job=\"fastapi\"}[30d]) * 100",
           "range": true,
@@ -169,7 +169,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "fieldMinMax": false,
@@ -228,7 +228,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "up{job=\"postgres\"}",
           "range": true,
@@ -239,10 +239,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "bequqybdudibke"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -316,7 +313,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "fieldMinMax": false,
@@ -375,7 +372,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "up{job=\"rabbitmq\"}",
           "range": true,
@@ -386,7 +383,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "fieldMinMax": false,
@@ -445,7 +442,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "up{job=\"rabbitmq\"}",
           "range": true,
@@ -469,9 +466,7 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "uid": "bequqybdudibke"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -531,7 +526,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -610,7 +605,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "expr": "sum(rate(http_request_duration_seconds_sum[1m])) by (handler) / sum(rate(http_request_duration_seconds_count[1m])) by (handler)",
           "legendFormat": "{{ handler }}",
           "refId": "A"
@@ -620,7 +615,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -699,7 +694,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[1m])) by (le, handler))",
           "legendFormat": "{{ handler }}",
           "refId": "A"
@@ -722,7 +717,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -801,7 +796,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "expr": "sum(rate(http_requests_total[1m])) by (handler, method)",
           "legendFormat": "{{ handler }} - {{ method }}",
           "refId": "A"
@@ -811,7 +806,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -890,7 +885,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "expr": "rate(task_created_total[1m])",
           "legendFormat": "tasks",
           "refId": "A"
@@ -900,7 +895,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -988,7 +983,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1064,7 +1059,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "expr": "sum by (status) (rate(http_requests_total[1m]))",
           "legendFormat": "status: {{ status }}",
           "refId": "A"
@@ -1074,7 +1069,7 @@
       "type": "barchart"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1150,7 +1145,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "rate(rabbitmq_queue_messages_ready[1m])",
           "legendFormat": "{{instance}}",
@@ -1175,7 +1170,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1254,7 +1249,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "expr": "sum(rate(http_requests_total{status=~\"5..\"}[1m])) by (handler)",
           "legendFormat": "{{ handler }}",
           "refId": "A"
@@ -1264,7 +1259,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1343,7 +1338,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "sum(rate(http_requests_total{status=~\"5..|4..\"}[1m])) by (status)",
           "legendFormat": "{{ handler }}",
@@ -1368,10 +1363,7 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "bequqybdudibke"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1460,10 +1452,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "bequqybdudibke"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1552,10 +1541,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "bequqybdudibke"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1644,10 +1630,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "bequqybdudibke"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1736,10 +1719,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "bequqybdudibke"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1841,10 +1821,7 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "bequqybdudibke"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1937,10 +1914,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "bequqybdudibke"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2033,10 +2007,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "bequqybdudibke"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2129,10 +2100,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "bequqybdudibke"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {

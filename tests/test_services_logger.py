@@ -30,3 +30,31 @@ def test_log_event_writes_to_mongodb():
         assert inserted_log["timestamp"].tzinfo == timezone.utc
 
         mock_client.close.assert_called_once()
+
+
+def test_log_event_handles_insert_exception():
+    mock_db = MagicMock()
+    mock_logs_collection = MagicMock()
+    mock_logs_collection.insert_one.side_effect = Exception("insert error")
+    mock_db.logs = mock_logs_collection
+    mock_client = MagicMock()
+
+    with patch(
+        "app.services.logger.get_sync_mongo_db", return_value=(mock_db, mock_client)
+    ):
+        # Deve rodar sem levantar erro
+        log_event(1, "fail_test", {"data": "test"})
+
+
+def test_log_event_handles_client_close_exception():
+    mock_db = MagicMock()
+    mock_logs_collection = MagicMock()
+    mock_db.logs = mock_logs_collection
+
+    mock_client = MagicMock()
+    mock_client.close.side_effect = Exception("close error")
+
+    with patch(
+        "app.services.logger.get_sync_mongo_db", return_value=(mock_db, mock_client)
+    ):
+        log_event(1, "close_fail", {"data": "test"})
