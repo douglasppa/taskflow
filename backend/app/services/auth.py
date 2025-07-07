@@ -41,7 +41,7 @@ def login_user(user_data: UserLogin, db: Session):
         log(f"Falha de login para o usuário: {user_data.email}", level=LogLevel.WARNING)
         raise ValueError("Credenciais inválidas")
     token = create_access_token(
-        {"sub": str(db_user.id)},
+        {"sub": str(db_user.id), "email": db_user.email},
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     user_login_total.inc()

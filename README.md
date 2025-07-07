@@ -1,95 +1,123 @@
 # TaskFlow
 
-Projeto de aprendizado construído com FastAPI, PostgreSQL, MongoDB, Celery, RabbitMQ, Prometheus, Grafana, Docker, GitHub Actions e Render.
+TaskFlow is a learning-oriented fullstack project built with **FastAPI**, **React**, **PostgreSQL**, **MongoDB**, **Celery**, **RabbitMQ**, **Prometheus**, **Grafana**, **Docker**, **GitHub Actions**, and **Render**.
 
-## 🌟 Objetivo
+This monorepo is designed to help developers explore how to build, test, observe, and deploy a modern web application from scratch using market-relevant technologies.
 
-Aprender a construir um projeto web moderno do zero, cobrindo:
+---
 
-* Autenticação com JWT
-* APIs RESTful (CRUD)
-* Banco de dados relacional (PostgreSQL)
-* Banco NoSQL para logs (MongoDB)
-* Processamento assíncrono com Celery + RabbitMQ
-* Exportação de métricas com Prometheus
-* Visualização com Grafana
-* Contêineres com Docker
-* Testes automatizados com Pytest
-* Lint com Flake8
-* Deploy contínuo com GitHub Actions e Render
+## 🌟 Objectives
 
-## 🧰 Tecnologias
+Learn how to build and operate a complete modern web project, covering:
 
-* [FastAPI](https://fastapi.tiangolo.com/)
-* [PostgreSQL](https://www.postgresql.org/)
-* [MongoDB](https://www.mongodb.com/)
-* [Celery](https://docs.celeryq.dev/)
-* [RabbitMQ](https://www.rabbitmq.com/)
-* [Prometheus](https://prometheus.io/)
-* [Grafana](https://grafana.com/)
-* [Docker & Docker Compose](https://www.docker.com/)
-* [SQLAlchemy + Alembic](https://www.sqlalchemy.org/)
-* [Pytest](https://docs.pytest.org/)
-* [Flake8](https://flake8.pycqa.org/)
-* [GitHub Actions](https://docs.github.com/en/actions)
-* [Render](https://render.com/)
+- 🔐 Authentication with JWT
+- 📦 RESTful APIs (CRUD)
+- 🧠 Relational database with PostgreSQL
+- 📄 NoSQL storage for logs using MongoDB
+- 🕒 Asynchronous processing with Celery + RabbitMQ
+- 📈 Metrics exporting with Prometheus
+- 📊 Observability with Grafana
+- 🐳 Containerization with Docker
+- ✅ Automated testing with Pytest
+- 🧹 Linting with Flake8 and ESLint
+- ⚙️ CI/CD with GitHub Actions
+- 🚀 Deployment on Render
+- 🎨 Frontend built with React + TypeScript + Tailwind
 
-## 🚀 Como rodar localmente
+---
 
-### Pré-requisitos
+## 🧰 Technologies
 
-* Docker + Docker Compose
-* Git
-* Python 3.11 (opcional, para desenvolvimento local)
+### Backend
 
-### Passos
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [MongoDB](https://www.mongodb.com/)
+- [Celery](https://docs.celeryq.dev/)
+- [RabbitMQ](https://www.rabbitmq.com/)
+- [SQLAlchemy + Alembic](https://www.sqlalchemy.org/)
+- [Prometheus](https://prometheus.io/)
+- [Grafana](https://grafana.com/)
+- [Pytest](https://docs.pytest.org/)
+- [Flake8](https://flake8.pycqa.org/)
+- [Docker & Docker Compose](https://www.docker.com/)
+- [Render](https://render.com/)
+
+### Frontend
+
+- [React](https://react.dev/)
+- [Vite](https://vitejs.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [React Router](https://reactrouter.com/)
+- [Axios](https://axios-http.com/)
+- [ESLint](https://eslint.org/)
+
+---
+
+## 🚀 Running the project locally
+
+### Prerequisites
+
+- [Docker](https://www.docker.com/) + Docker Compose
+- [Git](https://git-scm.com/)
+- Python 3.11+ (optional, for local backend dev)
+- Node.js 18+ (optional, for local frontend dev)
+
+### Quick start
 
 ```bash
 git clone https://github.com/douglasppa/taskflow.git
 cd taskflow
-cp .env.example .env  # ou crie o arquivo .env manualmente
+cp .env.example .env
 docker-compose -f docker-compose.dev.yml up -d --build
 ```
 
-Acesse a aplicação em [http://localhost:8000/docs](http://localhost:8000/docs)
+🧪 API available at: http://localhost:8000/docs
+🎨 Frontend runs at: http://localhost:5173
 
-## 🧪 Testes e Lint
-
-Para executar os testes automatizados com Pytest e verificar o lint com Flake8:
-
+## 🧪 Tests and Linting
+Backend
 ```bash
 docker-compose -f docker-compose.dev.yml exec web pytest
 flake8 .
 ```
+Frontend
+```bash
+cd frontend
+npm run lint
+```
 
-## 🔁 Integração Contínua com GitHub Actions
+## 🔁 CI/CD with GitHub Actions
+GitHub Actions is used to:
+* Run lint checks with Flake8 and ESLint
+* Run backend unit tests with Pytest
+Workflows are located in .github/workflows/.
 
-Este projeto utiliza GitHub Actions para:
+## 🚢 Deployment on Render
+This project is continuously deployed on Render.
+* The backend uses the Dockerfile in /backend
+* The startup command is:
+```bash
+python -m app.main
+Make sure to set environment variables in Render’s dashboard based on .env.example.
+```
 
-* Rodar o lint com Flake8
-* Executar os testes com Pytest
-
-O workflow está localizado em `.github/workflows/main.yml`.
-
-## 🚢 Deploy com Render
-
-O deploy contínuo está integrado à plataforma Render.
-
-* O Dockerfile é utilizado para criar a imagem da aplicação
-* O comando de inicialização no Render é:
-
-  ```bash
-  python -m app.main
-  ```
-
-Certifique-se de adicionar as variáveis de ambiente no painel da Render com base no arquivo `.env.example`.
-
----
+## 🧭 Project Structure (Monorepo)
+```bash
+taskflow/
+├── backend/       # FastAPI + Celery + Databases
+├── frontend/      # React + Vite + Tailwind + TypeScript
+├── grafana/       # Dashboards and provisioning
+├── prometheus/    # Monitoring configuration
+├── docker-compose.dev.yml
+├── .env, .env.example
+└── README.md, LICENSE, CHANGELOG.md
+```
 
 ## 📊 Monitoring Dashboard
+Here’s a snapshot of the current observability dashboard built with Grafana:
+![Grafana Dashboard](backend/assets/grafana-dashboard.png)
 
-Here’s a snapshot of the current observability dashboard in Grafana:
-
-![Grafana Dashboard](assets/grafana-dashboard.png)
-
-Este projeto é uma iniciativa de aprendizado e prática com tecnologias modernas de backend. Contributions e feedbacks são bem-vindos! 🚀
+🤝 Contributions
+This project is for personal learning, but contributions, ideas, and feedback are welcome! Open an issue or fork and submit a PR 🚀

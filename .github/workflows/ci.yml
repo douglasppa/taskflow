@@ -23,12 +23,14 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd backend
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r dev-requirements.txt
 
       - name: Run linters
         run: |
+          cd backend
           ruff check .
           black --check .
 
@@ -92,12 +94,14 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd backend
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r dev-requirements.txt
 
       - name: Run tests and generate coverage
         run: |
+          cd backend
           coverage run --source=app -m pytest
           coverage xml
           sed -i 's|<source>.*</source>|<source>app</source>|' coverage.xml
@@ -107,7 +111,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage.xml
+          path: backend/coverage.xml
 
   sonarcloud:
     name: SonarCloud 🔍
@@ -129,12 +133,41 @@ jobs:
           args: >
             -Dsonar.projectKey=douglasppa_taskflow
             -Dsonar.organization=douglasppa
-            -Dsonar.sources=app
-            -Dsonar.tests=tests
-            -Dsonar.python.coverage.reportPaths=coverage.xml
-            -Dsonar.coverage.inclusions=app/**
-            -Dsonar.coverage.exclusions=tests/**
+            -Dsonar.sources=backend/app
+            -Dsonar.tests=backend/tests
+            -Dsonar.python.coverage.reportPaths=backend/coverage.xml
+            -Dsonar.coverage.inclusions=backend/app/**
+            -Dsonar.coverage.exclusions=backend/tests/**
             -Dsonar.projectBaseDir=.
             -Dsonar.verbose=true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  frontend:
+    name: Frontend 🌐
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint (ESLint)
+        working-directory: frontend
+        run: npx eslint .
+
+      - name: Type check (TypeScript)
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build

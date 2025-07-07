@@ -5,7 +5,7 @@ services:
     plan: free
     repo: https://github.com/douglasppa/taskflow
     branch: main
-    dockerfilePath: Dockerfile
+    dockerfilePath: backend/Dockerfile
 
 databases:
   - name: taskflow-db

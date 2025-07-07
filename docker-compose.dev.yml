@@ -1,13 +1,13 @@
 services:
   web:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
       args:
         REQUIREMENTS: dev-requirements.txt
     container_name: fastapi_app
     volumes:
-      - .:/app
+      - ./backend:/app
     ports:
       - "8000:8000"
     env_file:
@@ -17,6 +17,33 @@ services:
       - mongodb
       - rabbitmq
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  celery:
+    build:
+      context: ./backend
+    container_name: celery_worker
+    command: celery -A app.workers.celery_app worker --loglevel=info
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - web
+      - rabbitmq
+      - mongodb
+    env_file:
+      - .env
+
+  alembic:
+    build:
+      context: ./backend
+    container_name: alembic_migrator
+    command: alembic upgrade head
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    env_file:
+      - .env
 
   postgres:
     image: postgres:15
@@ -66,24 +93,11 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-      - "15692:15692" # Exposição de métricas Prometheus
+      - "15692:15692"
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
       RABBITMQ_PROMETHEUS: "true"
-
-  celery:
-    build: .
-    container_name: celery_worker
-    command: celery -A app.workers.celery_app worker --loglevel=info
-    volumes:
-      - .:/app
-    depends_on:
-      - web
-      - rabbitmq
-      - mongodb
-    env_file:
-      - .env
 
   prometheus:
     image: prom/prometheus
@@ -109,18 +123,6 @@ services:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - ./grafana/dashboards:/var/lib/grafana/dashboards
-
-  alembic:
-    build: .
-    container_name: alembic_migrator
-    command: alembic upgrade head
-    depends_on:
-      - postgres
-    volumes:
-      - .:/app
-    working_dir: /app
-    env_file:
-      - .env
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest

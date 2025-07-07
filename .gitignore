@@ -1,17 +1,44 @@
-venv/
+# === BACKEND (Python) ===
+backend/venv/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 *.sqlite3
+*.db
+*.log
+.coverage
+alembic/versions/*.pyc
+
+# === ENV FILES ===
 .env
 .env.*
 !.env.example
-*.log
-*.db
-.idea/
+
+# === FRONTEND (Node.js / Vite) ===
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# === LOGS ===
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# === EDITOR / IDE CONFIG ===
 .vscode/
+!.vscode/extensions.json
+.idea/
 .DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# === TESTS / SNAPSHOTS ===
 __snapshots__/
-alembic/versions/*.pyc
-.coverage
