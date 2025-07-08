@@ -100,12 +100,11 @@ jobs:
           pip install -r dev-requirements.txt
 
       - name: Run tests and generate coverage
+        working-directory: backend
         run: |
-          cd backend
           coverage run --source=app -m pytest
-          coverage xml
-          sed -i 's|<source>.*</source>|<source>app</source>|' coverage.xml
-          cat backend/coverage.xml | grep '<source>'
+          coverage xml -o coverage.xml
+          sed -i 's|<source>.*</source>|<source>backend/app</source>|' coverage.xml
       
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -127,18 +126,26 @@ jobs:
         with:
           name: coverage-report
 
+      - name: Move report to backend
+        run: mkdir -p backend && mv coverage.xml backend/
+
+      - name: Debug coverage path
+        run: |
+          ls -l backend/coverage.xml
+          head -n 20 backend/coverage.xml
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           args: >
             -Dsonar.projectKey=douglasppa_taskflow
             -Dsonar.organization=douglasppa
-            -Dsonar.sources=backend/app
-            -Dsonar.tests=backend/tests
-            -Dsonar.python.coverage.reportPaths=backend/coverage.xml
-            -Dsonar.coverage.inclusions=backend/app/**
-            -Dsonar.coverage.exclusions=backend/tests/**
-            -Dsonar.projectBaseDir=.
+            -Dsonar.projectBaseDir=backend
+            -Dsonar.sources=app
+            -Dsonar.tests=tests
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.coverage.inclusions=app/**
+            -Dsonar.coverage.exclusions=tests/**
             -Dsonar.verbose=true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
