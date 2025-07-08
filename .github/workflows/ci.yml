@@ -164,6 +164,10 @@ jobs:
         working-directory: frontend
         run: npx eslint .
 
+      - name: Prettier check
+        working-directory: frontend
+        run: npx prettier --check .
+
       - name: Type check (TypeScript)
         working-directory: frontend
         run: npx tsc --noEmit

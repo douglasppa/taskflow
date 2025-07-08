@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { frontendVersion } from '../utils/version';
 
 const AuthenticatedLayout = ({ children }: { children: ReactNode }) => {

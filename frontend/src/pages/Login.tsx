@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -15,7 +15,7 @@ const Login = () => {
         password,
       });
       login(response.data.access_token);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erro de login:', err);
       alert('Login falhou!');
     }
