@@ -13,6 +13,7 @@ alembic/versions/*.pyc
 # === ENV FILES ===
 .env
 .env.*
+!frontend/.env
 !.env.example
 
 # === FRONTEND (Node.js / Vite) ===
