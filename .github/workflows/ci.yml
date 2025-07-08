@@ -9,7 +9,7 @@ on:
 
 jobs:
   lint:
-    name: Lint 🧹
+    name: backend-lint 🧹
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,7 @@ jobs:
           black --check .
 
   test:
-    name: Test 🧪
+    name: backend-test 🧪
     runs-on: ubuntu-latest
     needs: lint
 
@@ -113,7 +113,7 @@ jobs:
           path: backend/coverage.xml
 
   sonarcloud:
-    name: SonarCloud 🔍
+    name: backend-sonarcloud 🔍
     runs-on: ubuntu-latest
     needs: test
 
@@ -151,7 +151,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   frontend:
-    name: Frontend 🌐
+    name: frontend-lint 🧹
     runs-on: ubuntu-latest
 
     steps:
