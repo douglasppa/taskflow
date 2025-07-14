@@ -1,10 +1,22 @@
-import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { Navigate, useLocation } from 'react-router-dom';
+import type { ReactNode } from 'react';
 
-const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+interface PrivateRouteProps {
+  children: ReactNode;
+}
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/" />;
-};
+export default function PrivateRoute({ children }: PrivateRouteProps) {
+  const { user, token, isLoading } = useAuth();
+  const location = useLocation();
 
-export default PrivateRoute;
+  if (isLoading) {
+    return <div className="p-8 text-white">🔄 Verificando autenticação...</div>;
+  }
+
+  if (!token || !user) {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
+
+  return <>{children}</>;
+}

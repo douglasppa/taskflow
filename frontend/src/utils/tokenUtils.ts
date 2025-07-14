@@ -11,3 +11,7 @@ export interface JwtPayload {
 export function decodeToken(token: string) {
   return jwtDecode<JwtPayload>(token);
 }
+
+export function getToken(): string | null {
+  return localStorage.getItem('token');
+}

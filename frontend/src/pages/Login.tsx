@@ -2,6 +2,11 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 
+const BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://wsl.localhost:8000';
+const LOGIN_PATH = import.meta.env.VITE_API_LOGINPATH || '/api/v1/auth/login';
+const TASKS_URL = `${BASE_URL}${LOGIN_PATH}`;
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -10,13 +15,10 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/v1/auth/login`,
-        {
-          email,
-          password,
-        },
-      );
+      const response = await axios.post(TASKS_URL, {
+        email,
+        password,
+      });
       login(response.data.access_token);
     } catch (err: unknown) {
       console.error('Erro de login:', err);

@@ -4,6 +4,7 @@ export interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   user: { id: string; email: string } | null;
+  isLoading: boolean;
   login: (token: string) => void;
   logout: () => void;
 }
