@@ -7,12 +7,45 @@ const BASE_URL =
 const TASKS_PATH = import.meta.env.VITE_API_TASKS_PATH || '/api/v1/tasks';
 const TASKS_URL = `${BASE_URL}${TASKS_PATH}`;
 
-export async function getTasks(): Promise<Task[]> {
+export async function getTasks(skip = 0, limit = 10): Promise<Task[]> {
   const token = getToken();
-  const response = await axios.get(TASKS_URL, {
+  const response = await axios.get(`${TASKS_URL}?skip=${skip}&limit=${limit}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
   return response.data;
+}
+
+export async function createTask(task: {
+  title: string;
+  description: string;
+}): Promise<void> {
+  const token = getToken();
+  await axios.post(TASKS_URL, task, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function updateTask(
+  id: number,
+  task: { title: string; description: string },
+): Promise<void> {
+  const token = getToken();
+  await axios.put(`${TASKS_URL}/${id}`, task, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function deleteTask(id: number): Promise<void> {
+  const token = getToken();
+  await axios.delete(`${TASKS_URL}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }
