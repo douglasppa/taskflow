@@ -1,12 +1,18 @@
 from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schemas.user import UserCreate, UserLogin
-from app.services.auth import register_user, login_user
+from app.services.auth import register_user, login_user, login_user_google
 from http import HTTPStatus
 from app.core.logger import log, LogLevel
 
+
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+
+
+class GoogleToken(BaseModel):
+    token: str
 
 
 @router.post("/register", summary="Register a new user", status_code=HTTPStatus.CREATED)
@@ -33,3 +39,21 @@ async def login(user: UserLogin, db: Session = Depends(get_db)):
     except ValueError as e:
         log(f"Falha de login para o usuário {user.email}: {str(e)}", LogLevel.ERROR)
         raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED.value, detail=str(e))
+
+
+@router.post(
+    "/google", summary="Google OAuth authentication", status_code=HTTPStatus.OK
+)
+async def login_google(data: GoogleToken, db: Session = Depends(get_db)):
+    try:
+        token = login_user_google(data.token, db)
+        return {"access_token": token, "token_type": "bearer"}
+    except HTTPException as e:
+        log("Erro HTTP durante login com Google", level=LogLevel.ERROR)
+        raise e
+    except Exception as e:
+        log(f"Erro interno no login Google: {e}", level=LogLevel.ERROR)
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail="Erro interno ao processar autenticação Google",
+        )

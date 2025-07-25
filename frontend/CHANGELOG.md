@@ -29,7 +29,8 @@ All notable changes to this project will be documented here.
 - Reorganized the form with better input contrast and spacing.
 - Included **fully styled authentication UI features**:
   - Visual links for **"Create account"** and **"Forgot password"** sections.
-  - Social login buttons for **Google** and **Facebook**, properly styled.
+  - POST on /register endpoint.
+  - Social login button for **Google**.
 
 > This version focused on front-end refinement to elevate usability and prepare for future authentication features.
 

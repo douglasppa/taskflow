@@ -14,6 +14,8 @@ from fastapi import HTTPException
 from http import HTTPStatus
 from app.core.logger import log, LogLevel
 
+import requests
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -50,4 +52,51 @@ def login_user(user_data: UserLogin, db: Session):
         log(LOG_SEND_MSG, level=LogLevel.INFO)
     except Exception as e:
         log(f"Erro ao enviar log async: {e}", level=LogLevel.ERROR)
+    return token
+
+
+def login_user_google(token: str, db: Session):
+    # Verifica token com o Google
+    response = requests.get(
+        f"https://www.googleapis.com/oauth2/v3/tokeninfo?id_token={token}"
+    )
+    if response.status_code != 200:
+        log("Token Google inválido", level=LogLevel.WARNING)
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED.value, detail="Token inválido"
+        )
+
+    payload = response.json()
+    email = payload.get("email")
+    if not email:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST.value, detail="E-mail não encontrado"
+        )
+
+    # Busca ou cria usuário
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        user = User(email=email, password="")  # senha vazia
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        try:
+            log_event.delay(str(user.id), LogAction.REGISTER, {"email": user.email})
+            log(LOG_SEND_MSG, level=LogLevel.INFO)
+        except Exception as e:
+            log(f"Erro ao logar registro social: {e}", level=LogLevel.ERROR)
+
+    # Gera token JWT
+    token = create_access_token(
+        {"sub": str(user.id), "email": user.email},
+        expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
+    user_login_total.inc()
+
+    try:
+        log_event.delay(str(user.id), LogAction.LOGIN, {"email": user.email})
+        log(LOG_SEND_MSG, level=LogLevel.INFO)
+    except Exception as e:
+        log(f"Erro ao logar login social: {e}", level=LogLevel.ERROR)
+
     return token

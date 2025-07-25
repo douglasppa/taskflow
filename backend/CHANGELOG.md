@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented here.
 
+## 📦 v1.2.0 – Google OAuth login  
+**Date:** 2025-07-25
+
+### 🔐 Authentication
+- Added new route `/api/v1/auth/google` to support login with Google accounts via OAuth.
+- Implemented `login_user_google` service to validate ID tokens with Google, create users if necessary, and issue JWTs.
+
+### 🧪 Testing
+- Created unit and integration tests for the Google login API, achieving **100% coverage** for the new functionality.
+- Handled edge cases such as invalid tokens, missing email in payload, and logging failures during registration and login.
+
 ## 📦 v1.1.1 – JWT authentication flow  
 **Date:** 2025-07-05
 

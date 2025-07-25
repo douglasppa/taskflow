@@ -29,6 +29,8 @@ email_validator==2.2.0
 executing==2.2.0
 fastapi==0.115.12
 fastjsonschema==2.21.1
+google-auth==2.40.3
+google-auth-oauthlib==1.2.2
 greenlet==3.2.3
 grimp==3.9
 h11==0.16.0

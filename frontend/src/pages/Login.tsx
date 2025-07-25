@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook } from 'react-icons/fa';
+import { GoogleLogin } from '@react-oauth/google';
+import type { CredentialResponse } from '@react-oauth/google';
 
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://wsl.localhost:8000';
-const LOGIN_PATH = import.meta.env.VITE_API_LOGINPATH || '/api/v1/auth/login';
+
+const LOGIN_PATH = import.meta.env.VITE_API_LOGIN_PATH || '/api/v1/auth/login';
 const TASKS_URL = `${BASE_URL}${LOGIN_PATH}`;
+
+const GOOGLE_PATH =
+  import.meta.env.VITE_API_GOOGLE_PATH || '/api/v1/auth/google';
+const GOOGLE_URL = `${BASE_URL}${GOOGLE_PATH}`;
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -70,30 +75,34 @@ const Login = () => {
 
         <div className="text-sm text-gray-500 text-left">
           Não tem uma conta?{' '}
-          <a href="#" className="text-blue-600 hover:underline">
+          <a href="/register" className="text-blue-600 hover:underline">
             Criar conta
           </a>
         </div>
 
         <div className="border-t pt-4">
-          <p className="text-center text-sm text-gray-500 mb-2">Ou entre com</p>
+          <p className="text-center text-sm text-gray-500 mb-2">Ou</p>
           <div className="flex justify-center gap-4">
-            <button
-              type="button"
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 transition text-sm text-gray-800"
-              disabled
-            >
-              <FcGoogle className="text-lg" />
-              Google
-            </button>
-            <button
-              type="button"
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 transition text-sm text-gray-800"
-              disabled
-            >
-              <FaFacebook className="text-blue-600 text-lg" />
-              Facebook
-            </button>
+            <GoogleLogin
+              onSuccess={async (credentialResponse: CredentialResponse) => {
+                const idToken = credentialResponse.credential;
+                if (!idToken) return;
+
+                try {
+                  const res = await axios.post(GOOGLE_URL, {
+                    token: idToken,
+                  });
+                  login(res.data.access_token);
+                } catch (error) {
+                  console.error('Erro no login com Google:', error);
+                  alert('Falha ao logar com Google');
+                }
+              }}
+              onError={() => {
+                alert('Erro ao autenticar com Google');
+              }}
+              useOneTap={false}
+            />
           </div>
         </div>
       </form>
