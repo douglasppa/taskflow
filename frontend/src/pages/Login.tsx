@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
+import { FcGoogle } from 'react-icons/fc';
+import { FaFacebook } from 'react-icons/fa';
 
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://wsl.localhost:8000';
@@ -27,15 +29,18 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <form
         onSubmit={handleLogin}
-        className="bg-white p-6 rounded shadow-md w-96 space-y-4"
+        className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md space-y-5"
       >
-        <h2 className="text-2xl font-bold text-center">TaskFlow Login</h2>
+        <h2 className="text-2xl font-semibold text-center text-gray-800">
+          <span className="text-blue-600 font-bold">TaskFlow</span> Login
+        </h2>
+
         <input
           type="email"
-          className="w-full px-4 py-2 border rounded"
+          className="w-full border border-gray-300 rounded-md px-4 py-2 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           placeholder="E-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -43,7 +48,7 @@ const Login = () => {
         />
         <input
           type="password"
-          className="w-full px-4 py-2 border rounded"
+          className="w-full border border-gray-300 rounded-md px-4 py-2 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           placeholder="Senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -51,10 +56,46 @@ const Login = () => {
         />
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
         >
           Entrar
         </button>
+
+        <div className="text-sm text-gray-500 text-left">
+          Esqueceu sua senha?{' '}
+          <a href="#" className="text-blue-600 hover:underline">
+            Recuperar acesso
+          </a>
+        </div>
+
+        <div className="text-sm text-gray-500 text-left">
+          Não tem uma conta?{' '}
+          <a href="#" className="text-blue-600 hover:underline">
+            Criar conta
+          </a>
+        </div>
+
+        <div className="border-t pt-4">
+          <p className="text-center text-sm text-gray-500 mb-2">Ou entre com</p>
+          <div className="flex justify-center gap-4">
+            <button
+              type="button"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 transition text-sm text-gray-800"
+              disabled
+            >
+              <FcGoogle className="text-lg" />
+              Google
+            </button>
+            <button
+              type="button"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 transition text-sm text-gray-800"
+              disabled
+            >
+              <FaFacebook className="text-blue-600 text-lg" />
+              Facebook
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   );

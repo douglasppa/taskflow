@@ -1,20 +1,37 @@
 import { Link } from 'react-router-dom';
-import AuthenticatedLayout from '../components/AuthenticatedLayout';
+import { LayoutDashboard, ListChecks, User } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Dashboard() {
-  return (
-    <AuthenticatedLayout>
-      <h2 className="text-2xl font-bold mb-4 text-black">
-        Bem-vindo ao TaskFlow
-      </h2>
-      <p className="mb-6 text-black">Esta é sua área autenticada.</p>
+  const { user } = useAuth();
 
-      <Link
-        to="/tasks"
-        className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-      >
-        Ver Minhas Tarefas
-      </Link>
-    </AuthenticatedLayout>
+  return (
+    <div className="w-full max-w-md mx-auto mt-10 text-center">
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <LayoutDashboard className="w-6 h-6 text-blue-600" />
+        <h2 className="text-2xl font-bold text-gray-800">
+          Bem-vindo ao TaskFlow
+        </h2>
+      </div>
+
+      <p className="mb-4 text-gray-600 text-sm flex items-center justify-center gap-2">
+        <User className="w-4 h-4 text-gray-500" />
+        {user?.email}
+      </p>
+
+      <p className="mb-6 text-gray-600 text-sm">
+        Esta é sua área autenticada. Gerencie suas tarefas com facilidade!
+      </p>
+
+      <div className="flex flex-col sm:flex-row justify-center gap-4">
+        <Link
+          to="/tasks"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        >
+          <ListChecks className="w-4 h-4" />
+          Ver Minhas Tarefas
+        </Link>
+      </div>
+    </div>
   );
 }

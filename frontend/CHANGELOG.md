@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented here.
 
+## 🎨 v0.3.0 – Visual improvements, navbar and login enhancements
+
+**Date:** 2025-07-24
+
+### 🧭 Layout: Navigation bar and authenticated experience
+
+- Implemented a global **navbar layout** for authenticated pages, including:
+  - "Dashboard" and "Tarefas" navigation with current page highlight.
+  - Logged-in user email and version display.
+  - Styled logout button with icon and hover effect.
+- Added consistent **AuthenticatedLayout** to wrap protected pages.
+
+### 🧑‍🎨 UX/UI: Visual polish and icons
+
+- Redesigned `TaskCard` with cleaner structure and action buttons positioned externally.
+- Converted **Edit** and **Delete** buttons into minimalist **icons only**, improving focus and reducing clutter.
+- Used `Lucide` icons throughout the app for consistent and modern visuals:
+  - Task list icon (`ListChecks`) next to page title.
+  - Floating button to create new task uses `PlusCircle`.
+- Improved layout spacing, borders, and hover transitions for cards and buttons.
+
+### 🔐 Login page: Structure and style for future expansion
+
+- Improved **visual hierarchy** with emphasis on **TaskFlow** brand in title.
+- Reorganized the form with better input contrast and spacing.
+- Included **fully styled authentication UI features**:
+  - Visual links for **"Create account"** and **"Forgot password"** sections.
+  - Social login buttons for **Google** and **Facebook**, properly styled.
+
+> This version focused on front-end refinement to elevate usability and prepare for future authentication features.
+
 ## 📦 v0.2.0 – Task management (CRUD), feedback UX and pagination
 
 **Date:** 2025-07-05

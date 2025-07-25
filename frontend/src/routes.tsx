@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 import TaskList from './pages/TaskList';
+import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 
 const AppRoutes = () => {
   return (
@@ -12,7 +13,9 @@ const AppRoutes = () => {
         path="/dashboard"
         element={
           <PrivateRoute>
-            <Dashboard />
+            <AuthenticatedLayout>
+              <Dashboard />
+            </AuthenticatedLayout>
           </PrivateRoute>
         }
       />
@@ -20,7 +23,9 @@ const AppRoutes = () => {
         path="/tasks"
         element={
           <PrivateRoute>
-            <TaskList />
+            <AuthenticatedLayout>
+              <TaskList />
+            </AuthenticatedLayout>
           </PrivateRoute>
         }
       />

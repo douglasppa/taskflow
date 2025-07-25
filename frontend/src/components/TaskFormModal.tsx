@@ -62,17 +62,10 @@ export default function TaskFormModal({
 
                 <TaskForm
                   onSubmit={handleFormSubmit}
+                  onCancel={onClose}
                   initialData={initialData}
                   isSubmitting={isSubmitting}
                 />
-
-                <button
-                  onClick={onClose}
-                  className="mt-4 text-sm text-gray-600 hover:underline"
-                  disabled={isSubmitting}
-                >
-                  Cancelar
-                </button>
               </Dialog.Panel>
             </Transition.Child>
           </div>

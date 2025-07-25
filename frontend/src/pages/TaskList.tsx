@@ -10,6 +10,7 @@ import TaskFormModal from '../components/TaskFormModal';
 import type { Task } from '../types/task';
 import type { TaskFormData } from '../components/TaskForm';
 import toast from 'react-hot-toast';
+import { Pencil, Trash2, PlusCircle, ListChecks } from 'lucide-react';
 
 export default function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -86,7 +87,10 @@ export default function TaskList() {
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-4">
-      <h1 className="text-2xl font-bold mb-4">Minhas Tarefas</h1>
+      <h1 className="text-2xl font-bold mb-4 text-gray-800 flex items-center gap-2">
+        <ListChecks className="w-6 h-6 text-blue-600" />
+        Minhas Tarefas
+      </h1>
 
       {loading ? (
         <p>Carregando...</p>
@@ -95,16 +99,60 @@ export default function TaskList() {
       ) : (
         <div className="space-y-4">
           {tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onEdit={(t) => {
-                setEditingTask(t);
-                setModalOpen(true);
-              }}
-              onDelete={handleDelete}
-              loadingDeleteId={loadingDeleteId}
-            />
+            <div key={task.id} className="flex items-start gap-2 group">
+              <TaskCard task={task} />
+
+              <div className="flex flex-col gap-2 pt-1">
+                <button
+                  onClick={() => {
+                    setEditingTask(task);
+                    setModalOpen(true);
+                  }}
+                  className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-md transition"
+                  title="Editar"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+
+                <button
+                  onClick={() => handleDelete(task.id)}
+                  disabled={loadingDeleteId === task.id}
+                  className={`p-2 rounded-md transition
+                    ${
+                      loadingDeleteId === task.id
+                        ? 'text-gray-400 animate-pulse'
+                        : 'text-red-600 hover:text-red-800 hover:bg-red-100'
+                    }
+                  `}
+                  title="Excluir"
+                >
+                  {loadingDeleteId === task.id ? (
+                    <svg
+                      className="animate-spin h-4 w-4 text-red-600"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 100 8v4a8 8 0 01-8-8z"
+                      />
+                    </svg>
+                  ) : (
+                    <Trash2 className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -114,17 +162,31 @@ export default function TaskList() {
           <button
             onClick={() => fetchTasks(currentPage - 1)}
             disabled={currentPage === 0}
-            className="px-4 py-2 rounded bg-gray-200 text-sm disabled:opacity-50"
+            className={`px-4 py-2 rounded text-sm transition
+              ${
+                currentPage === 0
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-300 text-gray-800 hover:bg-gray-400'
+              }
+            `}
           >
             Anterior
           </button>
 
-          <span className="text-sm">Página {currentPage + 1}</span>
+          <span className="text-sm text-gray-600">
+            Página {currentPage + 1}
+          </span>
 
           <button
             onClick={() => fetchTasks(currentPage + 1)}
             disabled={tasks.length < tasksPerPage}
-            className="px-4 py-2 rounded bg-gray-200 text-sm disabled:opacity-50"
+            className={`px-4 py-2 rounded text-sm transition
+              ${
+                tasks.length < tasksPerPage
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-300 text-gray-800 hover:bg-gray-400'
+              }
+            `}
           >
             Próxima
           </button>
@@ -148,13 +210,10 @@ export default function TaskList() {
         }
         editMode={!!editingTask}
       />
-
-      <button
+      <PlusCircle
         onClick={() => setModalOpen(true)}
-        className="fixed bottom-6 right-6 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-700"
-      >
-        Nova Tarefa
-      </button>
+        className="fixed bottom-6 right-6 w-12 h-12 text-white bg-blue-600 p-2 rounded-full shadow-lg hover:bg-blue-700 cursor-pointer"
+      />
     </div>
   );
 }
