@@ -81,6 +81,7 @@ jobs:
       SECRET_KEY: changeme
       ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      RESET_TOKEN_EXPIRE_MINUTES: 15
       PROMETHEUS_PORT: 9000
 
     steps:

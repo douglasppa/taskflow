@@ -119,5 +119,14 @@ taskflow/
 Here’s a snapshot of the current observability dashboard built with Grafana:
 ![Grafana Dashboard](backend/assets/grafana-dashboard.png)
 
+## 🖼️ Frontend Screenshots
+Here are some screens from the React + Tailwind frontend built for TaskFlow:
+
+<p align="center">
+  <img src="frontend/assets/screenshot-login.png" alt="Login" width="250" style="margin-right: 10px;"/>
+  <img src="frontend/assets/screenshot-dashboard.png" alt="Dashboard" width="250" style="margin-right: 10px;"/>
+  <img src="frontend/assets/screenshot-tasks.png" alt="Tasks" width="250"/>
+</p>
+
 🤝 Contributions
 This project is for personal learning, but contributions, ideas, and feedback are welcome! Open an issue or fork and submit a PR 🚀

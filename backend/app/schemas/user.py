@@ -22,3 +22,16 @@ class UserResponse(BaseModel):
     email: EmailStr
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ForgotPasswordRequest(BaseModel):
+    """Payload de entrada no endpoint POST /auth/forgot-password"""
+
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    """Payload de entrada no endpoint POST /auth/reset-password"""
+
+    token: str
+    new_password: str

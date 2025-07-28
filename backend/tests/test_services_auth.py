@@ -8,6 +8,7 @@ from http import HTTPStatus
 from passlib.context import CryptContext
 from unittest.mock import patch
 from app.core.logger import LogLevel
+from app.auth.auth_handler import create_access_token
 
 
 def make_fake_user(email="test@example.com", password="123456"):
@@ -194,3 +195,93 @@ def test_login_user_google_log_event_register_fails(db_session: Session):
         )
 
         assert jwt == "jwt-token"
+
+
+def test_generate_reset_token_success():
+    email = "user@example.com"
+    with patch(
+        "app.services.auth.create_access_token", return_value="token123"
+    ) as mock_token, patch("app.services.auth.send_reset_email") as mock_send_email:
+
+        result = auth.generate_reset_token(email)
+
+        assert result == "token123"
+        mock_token.assert_called_once()
+        mock_send_email.assert_called_once_with(email, "token123")
+
+
+def test_generate_reset_token_error():
+    with patch(
+        "app.services.auth.create_access_token", side_effect=Exception("fail")
+    ), patch("app.services.auth.log"):
+        with pytest.raises(HTTPException) as e:
+            auth.generate_reset_token("x@x.com")
+
+        assert e.value.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+        assert "Erro ao gerar token" in str(e.value.detail)
+
+
+def test_verify_reset_token_valid():
+    token = create_access_token({"email": "x@x.com", "reset": True})
+    email = auth.verify_reset_token(token)
+    assert email == "x@x.com"
+
+
+def test_verify_reset_token_invalid_payload():
+    token = create_access_token({"email": "x@x.com"})  # missing 'reset'
+    with pytest.raises(HTTPException) as e:
+        auth.verify_reset_token(token)
+    assert e.value.status_code == HTTPStatus.BAD_REQUEST
+
+
+def test_verify_reset_token_internal_error(monkeypatch):
+    monkeypatch.setattr("app.services.auth.verify_access_token", lambda _: 1 / 0)
+    with pytest.raises(HTTPException) as e:
+        auth.verify_reset_token("abc.def.ghi")
+    assert e.value.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+def test_reset_user_password_success(db_session: Session):
+    email = "resetme@example.com"
+    user = User(email=email, password="abc")
+    db_session.add(user)
+    db_session.commit()
+
+    token = create_access_token({"email": email, "reset": True})
+
+    with patch("app.services.auth.log_event.delay"), patch(
+        "app.services.auth.send_updated_email"
+    ):
+        auth.reset_user_password(token, "novaSenha123", db_session)
+
+    updated_user = db_session.query(User).filter_by(email=email).first()
+    assert updated_user.password != "abc"
+
+
+def test_reset_user_password_user_not_found(db_session: Session):
+    token = create_access_token({"email": "ghost@none.com", "reset": True})
+    with pytest.raises(HTTPException) as e:
+        auth.reset_user_password(token, "novaSenha", db_session)
+    assert e.value.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_reset_user_password_email_fail(db_session: Session):
+    email = "confirmfail@example.com"
+    user = User(email=email, password="xyz")
+    db_session.add(user)
+    db_session.commit()
+
+    token = create_access_token({"email": email, "reset": True})
+
+    with patch(
+        "app.services.auth.send_updated_email", side_effect=Exception("mail fail")
+    ), patch("app.services.auth.log_event.delay"), patch(
+        "app.services.auth.log"
+    ) as mock_log:
+
+        auth.reset_user_password(token, "novaSenha", db_session)
+
+        mock_log.assert_any_call(
+            "Erro ao enviar e-mail de confirmação de senha: mail fail",
+            level=auth.LogLevel.ERROR,
+        )

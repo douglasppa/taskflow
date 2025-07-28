@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
+    RESET_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("RESET_TOKEN_EXPIRE_MINUTES", 15))
 
     # RabbitMQ connection
     RABBITMQ_URL: str = os.getenv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672")
@@ -63,6 +64,15 @@ class Settings(BaseSettings):
 
     # Prometheus settings
     PROMETHEUS_PORT: int = int(os.getenv("PROMETHEUS_PORT", 8000))
+
+    # Email (SMTP)
+    SMTP_HOST: str = os.getenv("SMTP_HOST", "smtp.gmail.com")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", 587))
+    SMTP_USER: str = os.getenv("SMTP_USER", "")
+    SMTP_PASS: str = os.getenv("SMTP_PASS", "")
+
+    # Frontend URL para recuperação de senha
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
     features: FeatureFlags = FeatureFlags()
 
