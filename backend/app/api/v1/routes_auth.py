@@ -76,6 +76,10 @@ def forgot_password(data: ForgotPasswordRequest, db: Session = Depends(get_db)):
         generate_reset_token(data.email)
         return {"message": "E-mail enviado com instruções para redefinir a senha"}
     except HTTPException as e:
+        log(
+            f"Erro ao solicitar redefinição (HTTPException): {e.detail}",
+            level=LogLevel.WARNING,
+        )
         raise e
     except Exception as e:
         log(f"Erro interno ao solicitar redefinição: {e}", level=LogLevel.ERROR)

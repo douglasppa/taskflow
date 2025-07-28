@@ -2,13 +2,15 @@
 import pytest
 from unittest.mock import patch
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from fastapi.testclient import TestClient
 from dotenv import load_dotenv
 
 from app.db.base import Base
 from app.main import app
 from app.db.session import get_db
+from app.models.user import User
+from app.services.auth import pwd_context
 from app.workers.celery_app import celery_app
 
 # Carrega variáveis de ambiente específicas para testes
@@ -66,3 +68,11 @@ def client(app_with_overrides):
     """Cria um TestClient com banco isolado e overrides aplicados."""
     with TestClient(app_with_overrides) as c:
         yield c
+
+
+@pytest.fixture
+def create_user(db_session: Session):
+    user = User(email="reset@example.com", password=pwd_context.hash("senha123"))
+    db_session.add(user)
+    db_session.commit()
+    return user

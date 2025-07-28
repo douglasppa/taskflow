@@ -163,11 +163,11 @@ def reset_user_password(token: str, new_password: str, db: Session):
 
         try:
             log_event.delay(str(user.id), LogAction.RESET, {"email": user.email})
-            log(LOG_SEND_MSG, level=LogLevel.INFO)
         except Exception as log_err:
             log(
                 f"Erro ao registrar log de redefinição: {log_err}", level=LogLevel.ERROR
             )
+        log(LOG_SEND_MSG, level=LogLevel.INFO)
 
         try:
             send_updated_email(user.email)
@@ -182,7 +182,7 @@ def reset_user_password(token: str, new_password: str, db: Session):
     except HTTPException as e:
         raise e
     except Exception as e:
-        log(f"Erro interno ao redefinir senha: {e}", level=LogLevel.ERROR)
+        log(f"Erro interno ao redefinir senha: {e}", level=LogLevel.WARNING)
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail="Erro interno ao redefinir senha",

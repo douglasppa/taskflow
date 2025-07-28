@@ -1,6 +1,6 @@
 from http import HTTPStatus
 from fastapi import HTTPException
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from app.auth.auth_handler import create_access_token
 from app.models.user import User
 
@@ -90,19 +90,22 @@ def test_google_login_internal_error(client):
         )
 
 
-def test_forgot_password_success(client, db_session):
-    # Arrange: cria usuário
-    email = "reset@example.com"
-    user = User(email=email, password="hashed")
-    db_session.add(user)
-    db_session.commit()
+@patch("app.services.email.smtplib.SMTP")
+def test_forgot_password_success(mock_smtp, client, db_session, create_user):
+    mock_server = MagicMock()
+    mock_smtp.return_value = mock_server
 
-    # Act
-    response = client.post(FORGOT_URL, json={"email": email})
+    data = {"email": create_user.email}
+    response = client.post(FORGOT_URL, json=data)
 
-    # Assert
     assert response.status_code == HTTPStatus.OK
-    assert "instruções" in response.json()["message"].lower()
+    assert (
+        response.json()["message"]
+        == "E-mail enviado com instruções para redefinir a senha"
+    )
+
+    # Verifica se o envio de e-mail foi simulado
+    mock_server.sendmail.assert_called_once()
 
 
 def test_forgot_password_invalid_email_format(client):
@@ -164,3 +167,15 @@ def test_reset_password_internal_error(mock_reset, client):
     )
     assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
     assert "Erro interno ao redefinir senha" in response.text
+
+
+@patch(
+    "app.api.v1.routes_auth.generate_reset_token",
+    side_effect=HTTPException(status_code=404, detail="Usuário não encontrado"),
+)
+def test_forgot_password_http_exception(mock_token, client):
+    payload = {"email": "inexistente@example.com"}
+    response = client.post("/api/v1/auth/forgot-password", json=payload)
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Usuário não encontrado"

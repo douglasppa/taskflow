@@ -1,7 +1,9 @@
 import pytest
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
+from fastapi.testclient import TestClient
 from app.services import auth
+from app.main import app
 from app.schemas.user import UserCreate, UserLogin
 from app.models.user import User
 from http import HTTPStatus
@@ -10,6 +12,8 @@ from unittest.mock import patch
 from app.core.logger import LogLevel
 from app.auth.auth_handler import create_access_token
 
+
+client = TestClient(app)
 
 def make_fake_user(email="test@example.com", password="123456"):
     pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -285,3 +289,15 @@ def test_reset_user_password_email_fail(db_session: Session):
             "Erro ao enviar e-mail de confirmação de senha: mail fail",
             level=auth.LogLevel.ERROR,
         )
+
+
+@patch("app.services.auth.verify_reset_token", side_effect=ValueError("Falha inesperada"))
+def test_reset_password_generic_exception(mock_verify):
+    payload = {
+        "token": "qualquer_token",
+        "new_password": "novaSenhaSegura123"
+    }
+    response = client.post("/api/v1/auth/reset-password", json=payload)
+    
+    assert response.status_code == 500
+    assert response.json()["detail"] == "Erro interno ao redefinir senha"
