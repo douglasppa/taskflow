@@ -15,6 +15,7 @@ from app.auth.auth_handler import create_access_token
 
 client = TestClient(app)
 
+
 def make_fake_user(email="test@example.com", password="123456"):
     pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
     hashed = pwd.hash(password)
@@ -291,13 +292,12 @@ def test_reset_user_password_email_fail(db_session: Session):
         )
 
 
-@patch("app.services.auth.verify_reset_token", side_effect=ValueError("Falha inesperada"))
+@patch(
+    "app.services.auth.verify_reset_token", side_effect=ValueError("Falha inesperada")
+)
 def test_reset_password_generic_exception(mock_verify):
-    payload = {
-        "token": "qualquer_token",
-        "new_password": "novaSenhaSegura123"
-    }
+    payload = {"token": "qualquer_token", "new_password": "novaSenhaSegura123"}
     response = client.post("/api/v1/auth/reset-password", json=payload)
-    
+
     assert response.status_code == 500
     assert response.json()["detail"] == "Erro interno ao redefinir senha"
