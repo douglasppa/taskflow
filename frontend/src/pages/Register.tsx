@@ -4,6 +4,7 @@ import { z } from 'zod';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://wsl.localhost:8000';
@@ -94,9 +95,9 @@ export default function Register() {
 
         <div className="text-sm text-gray-500 text-left">
           Já tem uma conta?{' '}
-          <a href="/" className="text-blue-600 hover:underline">
+          <Link to="/" className="text-blue-600 hover:underline">
             Entrar
-          </a>
+          </Link>
         </div>
       </form>
     </div>

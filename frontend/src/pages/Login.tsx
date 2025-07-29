@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { GoogleLogin } from '@react-oauth/google';
 import type { CredentialResponse } from '@react-oauth/google';
 import ForgotPasswordModal from '../components/ForgotPasswordModal';
+import { Link } from 'react-router-dom';
 
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://wsl.localhost:8000';
@@ -82,9 +83,9 @@ const Login = () => {
 
           <div className="text-sm text-gray-500 text-left">
             Não tem uma conta?{' '}
-            <a href="/register" className="text-blue-600 hover:underline">
+            <Link to="/register" className="text-blue-600 hover:underline">
               Criar conta
-            </a>
+            </Link>
           </div>
 
           <div className="border-t pt-4">

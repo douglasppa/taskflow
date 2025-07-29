@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import axios from 'axios';
 import { z } from 'zod';
+import { Link } from 'react-router-dom';
 
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://wsl.localhost:8000';
@@ -68,12 +69,12 @@ const ResetPassword = () => {
         {message ? (
           <>
             <p className="text-center text-gray-600">{message}</p>
-            <a
-              href="/"
+            <Link
+              to="/"
               className="block w-full mt-4 text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
             >
               Voltar ao login
-            </a>
+            </Link>
           </>
         ) : (
           <>
@@ -108,9 +109,12 @@ const ResetPassword = () => {
             </button>
 
             <div className="text-sm text-gray-500 text-left">
-              <a href="/" className="text-blue-600 hover:underline">
+              <Link
+                to="/"
+                className="block w-full mt-4 text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+              >
                 Voltar ao login
-              </a>
+              </Link>
             </div>
           </>
         )}
