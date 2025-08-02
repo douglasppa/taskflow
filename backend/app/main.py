@@ -10,6 +10,8 @@ from app.core.logger import log, LogLevel
 from app.api.v1.routes_task import router as task_router
 from app.api.v1.routes_auth import router as auth_router
 from app.api.v1.routes_monitoring import router as monitoring_router
+from app.api.v1.routes_metrics import router as metrics_router
+from app.services.metrics import update_frontend_metrics
 
 from fastapi.middleware.cors import CORSMiddleware
 import sys
@@ -36,6 +38,8 @@ origins = [
     "http://localhost:5173",  # Vite local
     "http://127.0.0.1:5173",  # Alternativo
     "https://taskflow-frontend-ylgl.onrender.com",  # Frontend em produção
+    "https://taskflow-frontend-roan.vercel.app",  # Frontend em produção
+    "https://frontend-five-rho-11.vercel.app",  # Frontend em produção
 ]
 
 app.add_middleware(
@@ -45,6 +49,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def update_metrics_before_request(request, call_next):
+    if request.url.path == "/metrics":
+        update_frontend_metrics()
+    response = await call_next(request)
+    return response
+
 
 # Prometheus instrumentation
 Instrumentator(
@@ -57,3 +70,4 @@ Instrumentator(
 app.include_router(task_router, prefix=settings.API_V1_STR)
 app.include_router(auth_router, prefix=settings.API_V1_STR)
 app.include_router(monitoring_router, prefix=settings.API_V1_STR)
+app.include_router(metrics_router, prefix=settings.API_V1_STR)

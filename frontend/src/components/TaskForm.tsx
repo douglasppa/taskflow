@@ -22,7 +22,7 @@ export default function TaskForm({
   onCancel,
   initialData,
   isSubmitting,
-}: TaskFormProps) {
+}: Readonly<TaskFormProps>) {
   const {
     register,
     handleSubmit,
@@ -45,10 +45,14 @@ export default function TaskForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="title"
+          className="block text-sm font-medium text-gray-700"
+        >
           Título
         </label>
         <input
+          id="title"
           type="text"
           {...register('title')}
           className="mt-1 w-full rounded-md border border-gray-400 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2"
@@ -59,10 +63,14 @@ export default function TaskForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="description"
+          className="block text-sm font-medium text-gray-700"
+        >
           Descrição
         </label>
         <textarea
+          id="description"
           {...register('description')}
           className="mt-1 w-full rounded-md border border-gray-400 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2"
           rows={4}

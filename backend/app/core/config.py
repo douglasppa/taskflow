@@ -5,11 +5,13 @@ from pydantic import Field, ConfigDict
 from app.core.logger import log, LogLevel
 
 
-def get_app_version() -> str:
+def get_app_version(version_path: Path = None) -> str:
     try:
-        base_dir = Path(__file__).resolve().parent.parent  # /app/app
-        version_path = base_dir.parent / "VERSION"  # /app/VERSION
-        app_version = version_path.read_text().strip()
+        if version_path:
+            app_version = version_path.read_text().strip()
+        else:
+            version_path = Path.cwd() / "VERSION"
+            app_version = version_path.read_text().strip()
         log(f"App Version: {app_version}", level=LogLevel.INFO)
         return app_version
     except Exception as e:

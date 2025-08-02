@@ -14,7 +14,10 @@ export default function Dashboard() {
         </h2>
       </div>
 
-      <p className="mb-4 text-gray-600 text-sm flex items-center justify-center gap-2">
+      <p
+        data-testid="user-email"
+        className="mb-4 text-gray-600 text-sm flex items-center justify-center gap-2"
+      >
         <User className="w-4 h-4 text-gray-500" />
         {user?.email}
       </p>

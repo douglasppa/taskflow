@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { decodeToken } from '../utils/tokenUtils';
 import { AuthContext } from '../context/AuthContext';
@@ -21,29 +21,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   }, []);
 
-  const login = (newToken: string) => {
-    localStorage.setItem('token', newToken);
-    setToken(newToken);
-    const decoded = decodeToken(newToken);
-    setUser({ id: decoded.sub, email: decoded.email });
-    navigate('/dashboard');
-  };
+  const login = useCallback(
+    (newToken: string) => {
+      localStorage.setItem('token', newToken);
+      setToken(newToken);
+      const decoded = decodeToken(newToken);
+      setUser({ id: decoded.sub, email: decoded.email });
+      navigate('/dashboard');
+    },
+    [navigate],
+  );
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
     navigate('/');
-  };
+  }, [navigate]);
 
-  const value: AuthContextType = {
-    token,
-    isAuthenticated: !!token,
-    user,
-    login,
-    logout,
-    isLoading,
-  };
+  const value: AuthContextType = useMemo(
+    () => ({
+      token,
+      isAuthenticated: !!token,
+      user,
+      login,
+      logout,
+      isLoading,
+    }),
+    [token, user, login, logout, isLoading],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

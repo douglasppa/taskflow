@@ -5,6 +5,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import type { CredentialResponse } from '@react-oauth/google';
 import ForgotPasswordModal from '../components/ForgotPasswordModal';
 import { Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://wsl.localhost:8000';
@@ -19,6 +20,7 @@ const GOOGLE_URL = `${BASE_URL}${GOOGLE_PATH}`;
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const { login } = useAuth();
 
@@ -55,14 +57,29 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <input
-            type="password"
-            className="w-full border border-gray-300 rounded-md px-4 py-2 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            placeholder="Senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div className="relative w-full">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              className="w-full border border-gray-300 rounded-md px-4 py-2 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none pr-10"
+              placeholder="Senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={showPassword ? 'Esconder senha' : 'Mostrar senha'}
+              title={showPassword ? 'Esconder senha' : 'Mostrar senha'}
+            >
+              {showPassword ? (
+                <Eye className="h-5 w-5 text-gray-500" />
+              ) : (
+                <EyeOff className="h-5 w-5 text-gray-500" />
+              )}
+            </button>
+          </div>
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"

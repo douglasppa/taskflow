@@ -13,3 +13,4 @@ class LogAction(str, Enum):
     TASK_CREATE = "create_task"
     TASK_UPDATE = "update_task"
     TASK_DELETE = "delete_task"
+    RESET_PASSWORD = "reset_password"

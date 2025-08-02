@@ -10,10 +10,7 @@ def test_get_app_version(monkeypatch, tmp_path):
     version_file = tmp_path / "VERSION"
     version_file.write_text(version_content)
 
-    monkeypatch.setattr(Path, "resolve", lambda self: tmp_path / "app")
-    monkeypatch.setattr(Path, "parent", tmp_path)
-
-    version = get_app_version()
+    version = get_app_version(version_path=version_file)
     assert version == version_content
 
 

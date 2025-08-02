@@ -17,7 +17,7 @@ interface ForgotPasswordModalProps {
 }
 
 const schema = z.object({
-  email: z.string().email('E-mail inválido'),
+  email: z.email({ message: 'E-mail inválido' }),
 });
 
 type ForgotPasswordFormData = z.infer<typeof schema>;

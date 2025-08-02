@@ -71,7 +71,7 @@ async def login_google(data: GoogleToken, db: Session = Depends(get_db)):
 
 
 @router.post("/forgot-password", summary="Request password reset")
-def forgot_password(data: ForgotPasswordRequest, db: Session = Depends(get_db)):
+async def forgot_password(data: ForgotPasswordRequest, db: Session = Depends(get_db)):
     try:
         generate_reset_token(data.email)
         return {"message": "E-mail enviado com instruções para redefinir a senha"}
@@ -87,7 +87,7 @@ def forgot_password(data: ForgotPasswordRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/reset-password", summary="Reset user password")
-def reset_password(data: ResetPasswordRequest, db: Session = Depends(get_db)):
+async def reset_password(data: ResetPasswordRequest, db: Session = Depends(get_db)):
     try:
         reset_user_password(data.token, data.new_password, db)
         return {"message": "Senha redefinida com sucesso"}

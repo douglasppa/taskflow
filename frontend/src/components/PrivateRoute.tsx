@@ -6,7 +6,9 @@ interface PrivateRouteProps {
   children: ReactNode;
 }
 
-export default function PrivateRoute({ children }: PrivateRouteProps) {
+export default function PrivateRoute({
+  children,
+}: Readonly<PrivateRouteProps>) {
   const { user, token, isLoading } = useAuth();
   const location = useLocation();
 

@@ -2,9 +2,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://wsl.localhost:8000';
@@ -13,7 +13,7 @@ const REGISTER_PATH =
 const REGISTER_URL = `${BASE_URL}${REGISTER_PATH}`;
 
 const registerSchema = z.object({
-  email: z.string().email({ message: 'E-mail inválido' }),
+  email: z.email({ message: 'E-mail inválido' }),
   password: z
     .string()
     .min(6, { message: 'Senha deve ter no mínimo 6 caracteres' }),
@@ -23,6 +23,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function Register() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const {
@@ -70,12 +71,27 @@ export default function Register() {
         </div>
 
         <div>
-          <input
-            type="password"
-            {...register('password')}
-            placeholder="Senha"
-            className="w-full border border-gray-300 rounded-md px-4 py-2 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
+          <div className="relative w-full">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              {...register('password')}
+              placeholder="Senha"
+              className="w-full border border-gray-300 rounded-md px-4 py-2 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={showPassword ? 'Esconder senha' : 'Mostrar senha'}
+              title={showPassword ? 'Esconder senha' : 'Mostrar senha'}
+            >
+              {showPassword ? (
+                <Eye className="h-5 w-5 text-gray-500" />
+              ) : (
+                <EyeOff className="h-5 w-5 text-gray-500" />
+              )}
+            </button>
+          </div>
           {errors.password && (
             <p className="text-red-600 text-sm mt-1">
               {errors.password.message}

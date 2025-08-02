@@ -4,14 +4,15 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Copy only requirements first (for better layer caching)
-ARG REQUIREMENTS=requirements.txt
+ARG REQUIREMENTS=backend/dev-requirements.txt
 COPY ${REQUIREMENTS} .
 
 # Install dependencies
-RUN pip install --no-cache-dir -r ${REQUIREMENTS}
+RUN pip install --no-cache-dir -r $(basename ${REQUIREMENTS})
 
 # Copy the rest of the application
-COPY . .
+COPY backend /app
+COPY VERSION /app/VERSION
 
 # Expose FastAPI default port
 EXPOSE 8000

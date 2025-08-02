@@ -162,7 +162,9 @@ def reset_user_password(token: str, new_password: str, db: Session):
         db.commit()
 
         try:
-            log_event.delay(str(user.id), LogAction.RESET, {"email": user.email})
+            log_event.delay(
+                str(user.id), LogAction.RESET_PASSWORD, {"email": user.email}
+            )
         except Exception as log_err:
             log(
                 f"Erro ao registrar log de redefinição: {log_err}", level=LogLevel.ERROR

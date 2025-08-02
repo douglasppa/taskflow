@@ -8,7 +8,7 @@ interface Props {
   children: ReactNode;
 }
 
-export default function AuthenticatedLayout({ children }: Props) {
+export default function AuthenticatedLayout({ children }: Readonly<Props>) {
   const { logout, user } = useAuth();
   const location = useLocation();
 

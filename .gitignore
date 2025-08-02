@@ -1,5 +1,6 @@
 # === BACKEND (Python) ===
 backend/venv/
+backend/VERSION
 __pycache__/
 *.pyc
 *.pyo
@@ -18,9 +19,11 @@ alembic/versions/*.pyc
 
 # === FRONTEND (Node.js / Vite) ===
 node_modules/
+coverage/
 dist/
 dist-ssr/
 *.local
+frontend/src/utils/VERSION
 
 # === LOGS ===
 logs/

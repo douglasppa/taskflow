@@ -1,13 +1,14 @@
 services:
   web:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
       args:
-        REQUIREMENTS: dev-requirements.txt
+        REQUIREMENTS: backend/dev-requirements.txt
     container_name: fastapi_app
     volumes:
       - ./backend:/app
+      - ./VERSION:/app/VERSION
     ports:
       - "8000:8000"
     env_file:

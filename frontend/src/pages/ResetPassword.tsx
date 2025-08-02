@@ -1,10 +1,10 @@
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import axios from 'axios';
 import { z } from 'zod';
-import { Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://wsl.localhost:8000';
@@ -24,6 +24,7 @@ const ResetPassword = () => {
   const [params] = useSearchParams();
   const token = params.get('token');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState('');
 
   const {
@@ -78,15 +79,30 @@ const ResetPassword = () => {
           </>
         ) : (
           <>
-            <input
-              type="password"
-              placeholder="Nova senha"
-              className={`w-full border ${
-                errors.new_password ? 'border-red-500' : 'border-gray-300'
-              } rounded-md px-4 py-2 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none`}
-              {...register('new_password')}
-              disabled={loading}
-            />
+            <div className="relative w-full">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Nova senha"
+                className={`w-full border ${
+                  errors.new_password ? 'border-red-500' : 'border-gray-300'
+                } rounded-md px-4 py-2 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+                {...register('new_password')}
+                disabled={loading}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Esconder senha' : 'Mostrar senha'}
+                title={showPassword ? 'Esconder senha' : 'Mostrar senha'}
+              >
+                {showPassword ? (
+                  <Eye className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <EyeOff className="h-5 w-5 text-gray-500" />
+                )}
+              </button>
+            </div>
             <p className="text-sm text-gray-500 mt-1">
               *A senha deve conter no mínimo 6 caracteres.
             </p>
@@ -107,15 +123,6 @@ const ResetPassword = () => {
             >
               {loading ? 'Enviando...' : 'Redefinir'}
             </button>
-
-            <div className="text-sm text-gray-500 text-left">
-              <Link
-                to="/"
-                className="block w-full mt-4 text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-              >
-                Voltar ao login
-              </Link>
-            </div>
           </>
         )}
       </form>
