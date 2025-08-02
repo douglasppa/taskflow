@@ -21,7 +21,7 @@ services:
 
   celery:
     build:
-      context: ./backend
+      context: .
     container_name: celery_worker
     command: celery -A app.workers.celery_app worker --loglevel=info
     volumes:
@@ -35,7 +35,7 @@ services:
 
   alembic:
     build:
-      context: ./backend
+      context: .
     container_name: alembic_migrator
     command: alembic upgrade head
     depends_on:
