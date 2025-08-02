@@ -19,11 +19,11 @@ export default function AuthenticatedLayout({ children }: Readonly<Props>) {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <header className="bg-white border-b shadow-sm px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-8">
+      <header className="bg-white border-b shadow-sm px-4 py-2 sm:px-6 sm:py-4 flex justify-between items-center">
+        <div className="flex items-center gap-4 sm:gap-8">
           <h1 className="text-xl font-bold text-blue-600">TaskFlow</h1>
 
-          <nav className="flex gap-6 text-sm font-medium">
+          <nav className="flex gap-4 sm:gap-6 text-sm font-medium">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -40,13 +40,15 @@ export default function AuthenticatedLayout({ children }: Readonly<Props>) {
           </nav>
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-gray-600">
+        <div className="flex items-center gap-2 sm:gap-4 text-sm text-gray-600">
           <span className="italic hidden sm:inline">User: {user?.email}</span>
-          <span className="text-xs opacity-60">v{frontendVersion}</span>
+          <span className="hidden sm:inline text-xs opacity-60">
+            v{frontendVersion}
+          </span>
 
           <button
             onClick={logout}
-            className="flex items-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700 transition text-sm"
+            className="flex items-center gap-1.5 bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700 transition text-sm"
           >
             <LogOut className="w-4 h-4" />
             <span className="hidden sm:inline">Logout</span>
